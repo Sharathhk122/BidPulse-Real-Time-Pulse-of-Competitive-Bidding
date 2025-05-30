@@ -120,7 +120,7 @@ npm install
 
 # Install client dependencies
 cd ../client
-npm install
+npm install --force
 ```
 
 #### 3. Set up environment variables
