@@ -1,6 +1,3 @@
-To enhance your **BidPulse** project’s README with a **cleaner and more beautiful layout** (without buttons), and to **include the two WhatsApp images** more aesthetically, here’s an improved and visually appealing markdown layout. This version keeps your current structure but enhances readability and presentation:
-
----
 
 # 🎯 **BidPulse** – Real-Time Pulse of Competitive Bidding
 
@@ -61,12 +58,39 @@ To enhance your **BidPulse** project’s README with a **cleaner and more beauti
 
 ## 🛠️ Setup Guide
 
-### Clone & Install
+📦 Environment Variables
+Create a .env file in the root directory with the following variables:
 
-```bash
+env
+DATABASE=mongodb://localhost:27017/live-auction
+JWT_SECRET=your_strong_secret_here
+JWT_EXPIRES_IN=1d
+CLIENT_URL=http://localhost:5173
+VITE_API_URL=http://localhost:5000
+
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_specific_password
+PORT=5000
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+🚀 Installation Guide
+Prerequisites
+Node.js (v16 or higher)
+
+MongoDB (local or Atlas)
+
+Git
+
+Steps
+Clone the repository
+
+bash
 git clone https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding.git
 cd BidPulse-Real-Time-Pulse-of-Competitive-Bidding
+Install dependencies
 
+bash
 # Install server dependencies
 cd server
 npm install
@@ -74,26 +98,25 @@ npm install
 # Install client dependencies
 cd ../client
 npm install
-```
+Set up environment variables
 
-### Setup `.env` Files
+Create .env files in both server and client directories as shown above
 
-Provide values like DB URL, JWT secret, Cloudinary keys, etc. (Refer to original README for full list.)
+Start the development servers
 
-### Run Dev Servers
-
-```bash
-# Server
+bash
+# In one terminal (server)
 cd server
 npm run dev
 
-# Client
+# In another terminal (client)
 cd ../client
 npm run dev
-```
+Access the application
 
----
+Frontend: http://localhost:5173
 
+Backend API: http://localhost:5000
 ## 📡 API Overview
 
 | Category | Endpoint                  | Description        |
