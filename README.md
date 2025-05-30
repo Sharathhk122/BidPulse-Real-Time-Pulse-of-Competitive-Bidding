@@ -35,8 +35,7 @@
 
 ---
 
-## 🖼️ WhatsApp Previews – New UI Enhancements
-
+## 🖼️ Email verfication one otp and another one welocme email
 <table>
   <tr>
     <td><img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/images/WhatsApp%20Image%202025-05-30%20at%2013.43.00_b42d5573.jpg" width="100%"/></td>
