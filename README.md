@@ -57,13 +57,63 @@
 ---
 
 ## 🛠️ Setup Guide
+Here’s the **complete, cleaned-up, and enhanced version** of your `.env` and installation section with consistent formatting, a more aesthetic layout, and clearer separation between server and client setup:
 
-### Clone & Install
+---
+
+## 📦 Environment Variables
+
+Create `.env` files in both the `server` and `client` directories with the following values:
+
+### 🔐 Server (`/server/.env`)
+
+```env
+DATABASE=mongodb://localhost:27017/live-auction
+JWT_SECRET=your_strong_secret_here
+JWT_EXPIRES_IN=1d
+CLIENT_URL=http://localhost:5173
+
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_specific_password
+PORT=5000
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+```
+
+### 🌐 Client (`/client/.env`)
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+---
+
+## 🚀 Installation Guide
+
+### ✅ Prerequisites
+
+Make sure the following are installed on your machine:
+
+* **[Node.js](https://nodejs.org/)** (v16 or higher)
+* **[MongoDB](https://www.mongodb.com/try/download/community)** (local or MongoDB Atlas)
+* **[Git](https://git-scm.com/)**
+
+---
+
+### 🛠️ Setup Steps
+
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding.git
 cd BidPulse-Real-Time-Pulse-of-Competitive-Bidding
+```
 
+#### 2. Install dependencies
+
+```bash
 # Install server dependencies
 cd server
 npm install
@@ -73,23 +123,35 @@ cd ../client
 npm install
 ```
 
-### Setup `.env` Files
+#### 3. Set up environment variables
 
-Provide values like DB URL, JWT secret, Cloudinary keys, etc. (Refer to original README for full list.)
+* Create the `.env` files in both the `server` and `client` directories with the values provided above.
 
-### Run Dev Servers
+#### 4. Start the development servers
 
 ```bash
-# Server
+# In one terminal window (start backend server)
 cd server
 npm run dev
+```
 
-# Client
-cd ../client
+```bash
+# In another terminal window (start frontend)
+cd client
 npm run dev
 ```
 
 ---
+
+### 🌍 Access the Application
+
+* **Frontend**: [http://localhost:5173](http://localhost:5173)
+* **Backend API**: [http://localhost:5000](http://localhost:5000)
+
+---
+
+Let me know if you'd like a production setup or dockerized instructions too!
+
 
 ## 📡 API Overview
 
