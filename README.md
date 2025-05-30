@@ -58,39 +58,12 @@
 
 ## 🛠️ Setup Guide
 
-📦 Environment Variables
-Create a .env file in the root directory with the following variables:
+### Clone & Install
 
-env
-DATABASE=mongodb://localhost:27017/live-auction
-JWT_SECRET=your_strong_secret_here
-JWT_EXPIRES_IN=1d
-CLIENT_URL=http://localhost:5173
-VITE_API_URL=http://localhost:5000
-
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASSWORD=your_app_specific_password
-PORT=5000
-CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_cloudinary_key
-CLOUDINARY_API_SECRET=your_cloudinary_secret
-🚀 Installation Guide
-Prerequisites
-Node.js (v16 or higher)
-
-MongoDB (local or Atlas)
-
-Git
-
-Steps
-Clone the repository
-
-bash
+```bash
 git clone https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding.git
 cd BidPulse-Real-Time-Pulse-of-Competitive-Bidding
-Install dependencies
 
-bash
 # Install server dependencies
 cd server
 npm install
@@ -98,25 +71,26 @@ npm install
 # Install client dependencies
 cd ../client
 npm install
-Set up environment variables
+```
 
-Create .env files in both server and client directories as shown above
+### Setup `.env` Files
 
-Start the development servers
+Provide values like DB URL, JWT secret, Cloudinary keys, etc. (Refer to original README for full list.)
 
-bash
-# In one terminal (server)
+### Run Dev Servers
+
+```bash
+# Server
 cd server
 npm run dev
 
-# In another terminal (client)
+# Client
 cd ../client
 npm run dev
-Access the application
+```
 
-Frontend: http://localhost:5173
+---
 
-Backend API: http://localhost:5000
 ## 📡 API Overview
 
 | Category | Endpoint                  | Description        |
@@ -163,4 +137,4 @@ We ❤️ contributors!
 * Sharath HK – [sharathhk40@gmail.com](mailto:sharathhk40@gmail.com)
 * GitHub – [BidPulse Repository](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding)
 
-Thank you for checking out BidPulse! Happy bidding! 🎉
+---
