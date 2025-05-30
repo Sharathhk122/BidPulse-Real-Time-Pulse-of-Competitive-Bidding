@@ -106,7 +106,40 @@ CLOUDINARY_API_SECRET=your_api_secret_here
 
 > ⚠️ **Never expose your API Secret publicly.** It should only exist in your server-side environment.
 
+
+### 🔐 How to Generate an App Password for Gmail (for EMAIL\_PASSWORD)
+
+If you're using Gmail to send emails (e.g., for verification or notifications), Google requires an **App Password** when 2-Step Verification is enabled. Here’s how to get it:
+
+1. **Enable 2-Step Verification**
+
+   * Go to [Google Account Security](https://myaccount.google.com/security)
+   * Under **"Signing in to Google"**, enable **2-Step Verification** if it's not already enabled.
+
+2. **Create an App Password**
+
+   * Once 2-Step Verification is enabled, return to the **Security** tab.
+   * Click on **App passwords** (you might need to verify your password).
+   * Under **Select app**, choose **Mail**.
+   * Under **Select device**, choose your device or select **Other** and name it (e.g., "BidPulse App").
+   * Click **Generate**.
+
+3. **Copy the 16-character password** Google gives you.
+
+   * This is your `EMAIL_PASSWORD` for the `.env` file.
+
+4. **Add it to your environment variables:**
+
+```env
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_generated_app_password
+```
+
+> ⚠️ **Keep this app password secure.** Do not share or commit it to version control.
+
 ---
+
+
 
 ### 🌐 Client (`/client/.env`)
 
