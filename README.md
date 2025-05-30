@@ -82,6 +82,32 @@ CLOUDINARY_API_KEY=your_cloudinary_key
 CLOUDINARY_API_SECRET=your_cloudinary_secret
 ```
 
+### 🌥️ How to Get Cloudinary API Keys
+
+To use Cloudinary for image uploads, follow these steps:
+
+1. Go to [https://cloudinary.com/](https://cloudinary.com/) and click **Sign up for free** (or log in if you already have an account).
+
+2. After signing in, you’ll be taken to the **Dashboard**.
+
+3. Under the **Account Details** section, you'll find:
+
+   * **Cloud Name** → `CLOUDINARY_CLOUD_NAME`
+   * **API Key** → `CLOUDINARY_API_KEY`
+   * **API Secret** → `CLOUDINARY_API_SECRET`
+
+4. Copy and paste these values into your `/server/.env` file like so:
+
+```env
+CLOUDINARY_CLOUD_NAME=your_cloud_name_here
+CLOUDINARY_API_KEY=your_api_key_here
+CLOUDINARY_API_SECRET=your_api_secret_here
+```
+
+> ⚠️ **Never expose your API Secret publicly.** It should only exist in your server-side environment.
+
+---
+
 ### 🌐 Client (`/client/.env`)
 
 ```env
