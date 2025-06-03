@@ -54,14 +54,13 @@ const userSchema = new mongoose.Schema({
     enum: ['customer', 'seller'],
     required: true
   },
+
   address: {
     street: {
       type: String,
       required: [true, 'Please provide street address']
     },
-    apartment: {
-      type: String
-    },
+    apartment: String,
     city: {
       type: String,
       required: [true, 'Please provide city']
@@ -78,12 +77,10 @@ const userSchema = new mongoose.Schema({
       type: String,
       required: [true, 'Please provide country']
     },
-    landmark: {
-      type: String
-    }
+    landmark: String
   },
 
-  // Verification fields
+  // Verification
   isVerified: {
     type: Boolean,
     default: false
@@ -91,7 +88,7 @@ const userSchema = new mongoose.Schema({
   otp: String,
   otpExpires: Date,
 
-  // Seller-specific fields
+  // Seller-specific
   businessName: {
     type: String,
     required: function () {
@@ -123,23 +120,20 @@ const userSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Password hashing middleware
+// Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
   next();
 });
 
-// Method to compare passwords
+// Compare passwords
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-// Indexes for better query performance
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+// Index for role queries (email and username are already indexed via `unique: true`)
 userSchema.index({ role: 1 });
 
 const User = mongoose.model('User', userSchema);
