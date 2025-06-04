@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://bidpulse-server10.onrender.com//api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://bidpulse-server10.onrender.com',
   withCredentials: true
 });
 
