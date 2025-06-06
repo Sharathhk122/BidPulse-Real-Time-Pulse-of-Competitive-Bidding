@@ -133,7 +133,7 @@ const CustomerDashboard = () => {
         return;
       }
 
-      await axios.post(`/api/auctions/${auctionId}/bids`, { amount });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/bids`, { amount });
       toast.success('Bid placed successfully!');
 
       const updatedAuctions = auctions.map(a => 
@@ -153,7 +153,7 @@ const CustomerDashboard = () => {
 
   const handleBuyNow = async (auctionId) => {
     try {
-      await axios.post(`/api/auctions/${auctionId}/buy-now`);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/buy-now`);
       toast.success('Purchased successfully!');
       
       setAuctions(prev => prev.filter(a => a._id !== auctionId));
