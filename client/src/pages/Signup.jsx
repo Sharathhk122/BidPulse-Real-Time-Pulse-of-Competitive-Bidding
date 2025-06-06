@@ -588,7 +588,7 @@ const Signup = () => {
   const handleVerifyOTP = async (values) => {
     try {
       setOtpLoading(true);
-      const { data } = await axios.post('/api/auth/verify-otp', {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, {
         email: emailForOTP,
         otp: values.otp
       });
@@ -616,7 +616,7 @@ const Signup = () => {
   const handleResendOTP = async () => {
     try {
       setResendLoading(true);
-      await axios.post('/api/auth/resend-otp', {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/resend-otp`, {
         email: emailForOTP
       });
       message.success('New OTP sent!');
