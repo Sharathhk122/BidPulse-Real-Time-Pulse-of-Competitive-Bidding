@@ -1,6 +1,6 @@
 import axios from 'axios';
 const instance = axios.create({
-  baseURL: 'https://bidpulse-real-time-pulse-of-competitive-9cfm.onrender.com/api'
+  baseURL: 'https://bidpulse-back1.onrender.com/api'
 });
 
 instance.interceptors.request.use((config) => {
