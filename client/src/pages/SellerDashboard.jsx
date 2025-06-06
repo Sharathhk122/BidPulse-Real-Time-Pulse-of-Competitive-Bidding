@@ -178,7 +178,7 @@ const SellerDashboard = () => {
 
   const handleCompleteAuction = async (auctionId) => {
     try {
-      await axios.post(`/api/auctions/${auctionId}/complete`);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/complete`);
       toast.success('Auction completed successfully');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to complete auction');
