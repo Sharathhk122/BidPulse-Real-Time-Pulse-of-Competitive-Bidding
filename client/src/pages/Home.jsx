@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Carousel, Card, Steps, Statistic, Table, Form, Input, Button, List, Avatar, Tag, Divider, Space } from 'antd';
-import { ArrowRightOutlined, FireOutlined, TrophyOutlined, ClockCircleOutlined, DollarOutlined, CheckCircleOutlined, StarFilled } from '@ant-design/icons';
+import { Layout, Carousel, Card, Steps, Statistic, Table, Form, Input, Button, List, Avatar, Tag, Divider, Space, Menu, Drawer } from 'antd';
+import { ArrowRightOutlined, FireOutlined, TrophyOutlined, ClockCircleOutlined, DollarOutlined, CheckCircleOutlined, StarFilled, MenuOutlined } from '@ant-design/icons';
 import { useSpring, animated } from 'react-spring';
 import { useInView } from 'react-intersection-observer';
 import Particles from "react-tsparticles";
@@ -458,6 +458,7 @@ const AuctionCard3D = ({ auction }) => {
 const Home = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [isParticlesLoaded, setIsParticlesLoaded] = useState(false);
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const typedRef = React.useRef(null);
   const heroTextRef = useRef(null);
 
@@ -507,6 +508,8 @@ const Home = () => {
   const particlesLoaded = async () => {
     console.log("Particles loaded");
   };
+
+  const navItems = ['Home', 'Auctions', 'How It Works', 'Top Bidders', 'Testimonials'];
 
   return (
     <Layout className="layout" style={{ background: colors.dark }}>
@@ -624,7 +627,8 @@ const Home = () => {
         background: 'rgba(15, 12, 41, 0.9)',
         borderBottom: `1px solid ${colors.secondary}`,
         boxShadow: `0 4px 30px rgba(106, 17, 203, 0.3)`,
-        backdropFilter: 'blur(10px)'
+        backdropFilter: 'blur(10px)',
+        padding: '0 20px'
       }}>
         <AnimatedSection animation="slideInDown">
           <div className="header-content">
@@ -647,8 +651,10 @@ const Home = () => {
                 BidLive
               </span>
             </motion.div>
-            <div className="nav-links">
-              {['Home', 'Auctions', 'How It Works', 'Top Bidders', 'Testimonials'].map((item, index) => (
+            
+            {/* Desktop Navigation */}
+            <div className="nav-links" style={{ display: 'flex' }}>
+              {navItems.map((item, index) => (
                 <motion.div
                   key={item}
                   initial={{ y: -100 }}
@@ -659,6 +665,7 @@ const Home = () => {
                     damping: 20,
                     delay: index * 0.1
                   }}
+                  className="desktop-nav-item"
                 >
                   <motion.a
                     href={`#${item.toLowerCase().replace(' ', '-')}`}
@@ -683,6 +690,28 @@ const Home = () => {
                 </motion.div>
               ))}
             </div>
+            
+            {/* Mobile Menu Button */}
+            <motion.div 
+              className="mobile-menu-button"
+              initial={{ y: -100 }}
+              animate={{ y: 0 }}
+              transition={{ 
+                type: 'spring', 
+                stiffness: 300, 
+                damping: 20,
+                delay: 0.5
+              }}
+              style={{ display: 'none' }}
+            >
+              <Button 
+                type="text" 
+                icon={<MenuOutlined style={{ color: colors.light, fontSize: '1.5rem' }} />}
+                onClick={() => setMobileMenuVisible(true)}
+                style={{ padding: 0 }}
+              />
+            </motion.div>
+            
             <Space className="auth-buttons">
               <motion.div 
                 initial={{ y: -100 }}
@@ -693,6 +722,7 @@ const Home = () => {
                   damping: 20,
                   delay: 0.5
                 }}
+                className="desktop-auth-button"
               >
                 <Link to="/login">
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -717,6 +747,7 @@ const Home = () => {
                   damping: 20,
                   delay: 0.6
                 }}
+                className="desktop-auth-button"
               >
                 <Link to="/signup">
                   <motion.div 
@@ -742,6 +773,63 @@ const Home = () => {
         </AnimatedSection>
       </Header>
 
+      {/* Mobile Menu Drawer */}
+      <Drawer
+        title={
+          <span style={{ 
+            fontWeight: 'bold', 
+            background: colors.gradient,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            BidLive
+          </span>
+        }
+        placement="right"
+        closable={true}
+        onClose={() => setMobileMenuVisible(false)}
+        visible={mobileMenuVisible}
+        bodyStyle={{ background: colors.darker }}
+        headerStyle={{ background: colors.dark, borderBottom: `1px solid ${colors.secondary}` }}
+        drawerStyle={{ background: colors.dark }}
+      >
+        <Menu theme="dark" mode="vertical" style={{ background: 'transparent', borderRight: 0 }}>
+          {navItems.map((item) => (
+            <Menu.Item key={item}>
+              <a 
+                href={`#${item.toLowerCase().replace(' ', '-')}`} 
+                onClick={() => setMobileMenuVisible(false)}
+                style={{ color: colors.light }}
+              >
+                {item}
+              </a>
+            </Menu.Item>
+          ))}
+          <Menu.Divider />
+          <Menu.Item>
+            <Link to="/login" style={{ color: colors.light }} onClick={() => setMobileMenuVisible(false)}>
+              Login
+            </Link>
+          </Menu.Item>
+          <Menu.Item>
+            <Link 
+              to="/signup" 
+              onClick={() => setMobileMenuVisible(false)}
+              style={{ 
+                color: colors.light,
+                background: colors.gradientAccent,
+                borderRadius: 4,
+                padding: '4px 8px',
+                display: 'inline-block',
+                marginTop: 5
+              }}
+            >
+              Sign Up
+            </Link>
+          </Menu.Item>
+        </Menu>
+      </Drawer>
+
       <Content style={{ paddingTop: 64 }}>
         {/* Hero Section with enhanced 3D animations */}
         <section id="home" className="hero-section" style={{ 
@@ -754,43 +842,43 @@ const Home = () => {
           <div className="container">
             <div style={{ position: 'relative', zIndex: 1 }}>
               <AnimatedSection animation="rotate3D" delay={0.3} config={{ tension: 300 }}>
-              <motion.h1 
-  style={{ 
-    fontSize: '3.5rem', 
-    marginBottom: 20,
-    fontWeight: 'bold',
-    lineHeight: 1.2
-  }}
-  initial={{ opacity: 0, y: -50 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8 }}
->
-  <motion.span
-    style={{
-      background: colors.gradient,
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      display: 'inline-block'
-    }}
-    animate={{
-      textShadow: [
-        `0 0 10px ${colors.primary}`,
-        `0 0 20px ${colors.secondary}`,
-        `0 0 10px ${colors.accent}`,
-        `0 0 10px ${colors.primary}`
-      ],
-      scale: [1, 1.05, 1],
-    }}
-    transition={{
-      duration: 8,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"
-    }}
-  >
-   <span ref={heroTextRef}></span>
-  </motion.span>
-</motion.h1>
+                <motion.h1 
+                  style={{ 
+                    fontSize: '3.5rem', 
+                    marginBottom: 20,
+                    fontWeight: 'bold',
+                    lineHeight: 1.2
+                  }}
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <motion.span
+                    style={{
+                      background: colors.gradient,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      display: 'inline-block'
+                    }}
+                    animate={{
+                      textShadow: [
+                        `0 0 10px ${colors.primary}`,
+                        `0 0 20px ${colors.secondary}`,
+                        `0 0 10px ${colors.accent}`,
+                        `0 0 10px ${colors.primary}`
+                      ],
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      duration: 8,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <span ref={heroTextRef}></span>
+                  </motion.span>
+                </motion.h1>
               </AnimatedSection>
               
               <AnimatedSection animation="slideInLeft" delay={0.5}>
@@ -799,125 +887,101 @@ const Home = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
                 >
-                 <p style={{ 
-  fontSize: '1.2rem', 
-  marginBottom: 10, 
-  maxWidth: 600,
-  color: [
-    '#FF5733', // fire orange
-    '#FF8D1A', // warm orange
-    '#FFD700', // gold
-    '#FF5733'
-  ],
-  textShadow: [
-    '0 0 5px #FF5733',
-    '0 0 10px #FF8D1A',
-    '0 0 8px #FFD700',
-    '0 0 5px #FF5733'
-  ]
-  
-}}>
-  Discover amazing deals on: 
-  <motion.span 
-    id="typed-text" 
-    style={{ 
-      display: 'inline-block',
-      marginLeft: 5
-    }}
-    animate={{
-      color: [
-        colors.primary,
-        colors.secondary,
-        colors.accent,
-        colors.gold,
-        colors.primary
-      ],
-      textShadow: [
-        `0 0 5px ${colors.primary}`,
-        `0 0 5px ${colors.secondary}`,
-        `0 0 5px ${colors.accent}`,
-        `0 0 5px ${colors.gold}`,
-        `0 0 5px ${colors.primary}`
-      ]
-    }}
-    transition={{
-      duration: 8,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"
-    }}
-  />
-</p>
-<motion.p 
-  style={{ 
-    fontSize: '1.2rem', 
-    marginBottom: 30, 
-    maxWidth: 600,
-  }}
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ delay: 0.7 }}
->
-<motion.p 
-  style={{ 
-    fontSize: '1.2rem', 
-    marginBottom: 30, 
-    maxWidth: 600,
-  }}
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ delay: 0.7 }}
->
-  <motion.span
-    style={{
-      display: 'inline-block',
-      padding: '8px 16px',
-      borderRadius: '8px',
-      background: 'linear-gradient(145deg, rgba(15,12,41,0.3), rgba(106,17,203,0.2))',
-      boxShadow: `0 4px 15px rgba(106,17,203,0.3)`,
-      backdropFilter: 'blur(5px)',
-      // border removed
-    }}
-    animate={{
-      color: [
-        'rgba(245,247,250,0.9)',
-        'rgba(255,75,43,0.8)',
-        'rgba(106,17,203,0.8)',
-        'rgba(37,117,252,0.8)',
-        'rgba(245,247,250,0.9)'
-      ],
-      textShadow: [
-        `0 0 5px ${colors.primary}`,
-        `0 0 10px ${colors.accent}`,
-        `0 0 8px ${colors.secondary}`,
-        `0 0 5px ${colors.primary}`
-      ],
-      boxShadow: [
-        `0 4px 15px rgba(106,17,203,0.3)`,
-        `0 4px 20px rgba(255,75,43,0.3)`,
-        `0 4px 15px rgba(37,117,252,0.3)`,
-        `0 4px 15px rgba(106,17,203,0.3)`
-      ],
-      scale: [1, 1.02, 1],
-      y: [0, -3, 0]
-    }}
-    transition={{
-      duration: 8,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"
-    }}
-    whileHover={{
-      scale: 1.05,
-      boxShadow: `0 8px 25px ${colors.accent}`,
-      transition: { duration: 0.3 }
-    }}
-  >
-    Experience the thrill of live bidding from anywhere in the world.
-  </motion.span>
-</motion.p>
-
-</motion.p>
+                  <p style={{ 
+                    fontSize: '1.2rem', 
+                    marginBottom: 10, 
+                    maxWidth: 600,
+                    color: '#FF5733',
+                    textShadow: '0 0 5px #FF5733'
+                  }}>
+                    Discover amazing deals on: 
+                    <motion.span 
+                      id="typed-text" 
+                      style={{ 
+                        display: 'inline-block',
+                        marginLeft: 5
+                      }}
+                      animate={{
+                        color: [
+                          colors.primary,
+                          colors.secondary,
+                          colors.accent,
+                          colors.gold,
+                          colors.primary
+                        ],
+                        textShadow: [
+                          `0 0 5px ${colors.primary}`,
+                          `0 0 5px ${colors.secondary}`,
+                          `0 0 5px ${colors.accent}`,
+                          `0 0 5px ${colors.gold}`,
+                          `0 0 5px ${colors.primary}`
+                        ]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </p>
+                  <motion.p 
+                    style={{ 
+                      fontSize: '1.2rem', 
+                      marginBottom: 30, 
+                      maxWidth: 600,
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <motion.span
+                      style={{
+                        display: 'inline-block',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        background: 'linear-gradient(145deg, rgba(15,12,41,0.3), rgba(106,17,203,0.2))',
+                        boxShadow: `0 4px 15px rgba(106,17,203,0.3)`,
+                        backdropFilter: 'blur(5px)',
+                      }}
+                      animate={{
+                        color: [
+                          'rgba(245,247,250,0.9)',
+                          'rgba(255,75,43,0.8)',
+                          'rgba(106,17,203,0.8)',
+                          'rgba(37,117,252,0.8)',
+                          'rgba(245,247,250,0.9)'
+                        ],
+                        textShadow: [
+                          `0 0 5px ${colors.primary}`,
+                          `0 0 10px ${colors.accent}`,
+                          `0 0 8px ${colors.secondary}`,
+                          `0 0 5px ${colors.primary}`
+                        ],
+                        boxShadow: [
+                          `0 4px 15px rgba(106,17,203,0.3)`,
+                          `0 4px 20px rgba(255,75,43,0.3)`,
+                          `0 4px 15px rgba(37,117,252,0.3)`,
+                          `0 4px 15px rgba(106,17,203,0.3)`
+                        ],
+                        scale: [1, 1.02, 1],
+                        y: [0, -3, 0]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                      }}
+                      whileHover={{
+                        scale: 1.05,
+                        boxShadow: `0 8px 25px ${colors.accent}`,
+                        transition: { duration: 0.3 }
+                      }}
+                    >
+                      Experience the thrill of live bidding from anywhere in the world.
+                    </motion.span>
+                  </motion.p>
                 </motion.div>
               </AnimatedSection>
               
@@ -967,8 +1031,9 @@ const Home = () => {
               </AnimatedSection>
             </div>
             
-            {/* Floating auction items with enhanced 3D effect */}
+            {/* Floating auction items with enhanced 3D effect - Hidden on mobile */}
             <motion.div
+              className="floating-item-1"
               style={{
                 position: 'absolute',
                 right: 100,
@@ -1034,6 +1099,7 @@ const Home = () => {
             </motion.div>
             
             <motion.div
+              className="floating-item-2"
               style={{
                 position: 'absolute',
                 right: 300,
@@ -1228,7 +1294,7 @@ const Home = () => {
           padding: '100px 0', 
           background: `linear-gradient(135deg, ${colors.dark}, ${colors.darker})`,
           position: 'relative',
-          clipPath: 'polygon(0 0, 100% 5%, 100% 100%,           0% 95%)'
+          clipPath: 'polygon(0 0, 100% 5%, 100% 100%, 0% 95%)'
         }}>
           <div className="container">
             <AnimatedSection animation="fadeIn">
@@ -1657,20 +1723,19 @@ const Home = () => {
             </AnimatedSection>
 
             <AnimatedSection animation="fadeIn" delay={0.3}>
-            <motion.div
-  whileHover={{ scale: 1.02, rotateX: 2, rotateY: 2 }}
-  style={{
-    perspective: 1000,
-    padding: 24,
-    borderRadius: 20,
-    background: 'linear-gradient(-45deg, #ff6ec4, #7873f5, #4ade80, #facc15)',
-    backgroundSize: '600% 600%',
-    animation: 'animatedGradient 12s ease infinite',
-    boxShadow: '0 25px 45px rgba(0, 0, 0, 0.5)',
-    transformStyle: 'preserve-3d',
-  }}
->
-
+              <motion.div
+                whileHover={{ scale: 1.02, rotateX: 2, rotateY: 2 }}
+                style={{
+                  perspective: 1000,
+                  padding: 24,
+                  borderRadius: 20,
+                  background: 'linear-gradient(-45deg, #ff6ec4, #7873f5, #4ade80, #facc15)',
+                  backgroundSize: '600% 600%',
+                  animation: 'animatedGradient 12s ease infinite',
+                  boxShadow: '0 25px 45px rgba(0, 0, 0, 0.5)',
+                  transformStyle: 'preserve-3d',
+                }}
+              >
                 <Table 
                   columns={[
                     { 
@@ -2090,7 +2155,7 @@ const Home = () => {
         </section>
       </Content>
 
-      <style jsx>{`
+      <style jsx global>{`
         .header-content {
           display: flex;
           justify-content: space-between;
@@ -2182,25 +2247,82 @@ const Home = () => {
         .ant-steps-item-icon .ant-steps-icon {
           color: ${colors.primary} !important;
         }
-        
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+          .hero-section h1 {
+            font-size: 2.8rem !important;
+          }
+          
+          .floating-item-1, .floating-item-2 {
+            display: none !important;
+          }
+        }
+
         @media (max-width: 768px) {
           .header-content {
-            flex-direction: column;
-            padding: 10px 0;
+            padding: 0 20px;
           }
           
-          .nav-links {
-            margin: 15px 0;
-            flex-wrap: wrap;
-            justify-content: center;
+          .desktop-nav-item, .desktop-auth-button {
+            display: none !important;
           }
           
-          .auth-buttons {
-            margin-top: 10px;
+          .mobile-menu-button {
+            display: block !important;
           }
           
           .hero-section h1 {
-            font-size: 2.5rem !important;
+            font-size: 2.2rem !important;
+            margin-top: 20px;
+          }
+          
+          .hero-section p {
+            font-size: 1rem !important;
+          }
+          
+          .section {
+            padding: 60px 0 !important;
+          }
+          
+          .ant-steps-horizontal.ant-steps-label-horizontal {
+            flex-direction: column;
+          }
+          
+          .ant-steps-item {
+            margin-bottom: 20px !important;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .hero-section h1 {
+            font-size: 1.8rem !important;
+          }
+          
+          .auth-buttons {
+            flex-direction: column;
+            gap: 10px;
+          }
+          
+          .newsletter-form {
+            flex-direction: column;
+          }
+          
+          .newsletter-form .ant-form-item {
+            max-width: 100% !important;
+            margin-bottom: 15px;
+          }
+        }
+
+        @keyframes animatedGradient {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
           }
         }
       `}</style>
@@ -2209,4 +2331,3 @@ const Home = () => {
 };
 
 export default Home;
-
