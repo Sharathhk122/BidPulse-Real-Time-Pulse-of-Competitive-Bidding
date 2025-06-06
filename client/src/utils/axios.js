@@ -1,6 +1,6 @@
 import axios from 'axios';
 const instance = axios.create({
-  baseURL: 'https://bidpulse-server10.onrender.com'
+  baseURL: 'https://bidpulse-server10.onrender.com/api'
 });
 
 instance.interceptors.request.use((config) => {
