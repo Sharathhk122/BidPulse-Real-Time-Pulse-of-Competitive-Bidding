@@ -21,9 +21,8 @@ const app = express();
 
 // ✅ CORS FIX: Allow multiple frontends
 const allowedOrigins = [
-  'https://bidpulse-newfrontend.onrender.com',
-  'https://bidpulse-newfrontend4.onrender.com',
-  'http://localhost:5173' // for local dev
+  'https://bidpulse-newfront2.onrender.com'
+ // for local dev
 ];
 
 app.use(cors({
