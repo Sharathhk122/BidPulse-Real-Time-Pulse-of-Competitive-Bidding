@@ -159,7 +159,7 @@ const AuctionDetails = () => {
     }
 
     try {
-      await axios.post(`/api/auctions/${id}/bids`, { amount: parseFloat(bidAmount) });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${id}/bids`, { amount: parseFloat(bidAmount) });
       toast.success('Bid placed successfully!');
       setBidAmount('');
     } catch (err) {
@@ -171,7 +171,7 @@ const AuctionDetails = () => {
     if (!auction.buyNowPrice) return;
 
     try {
-      await axios.post(`/api/auctions/${id}/buy-now`, { amount: auction.buyNowPrice });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${id}/buy-now`, { amount: auction.buyNowPrice });
       toast.success('Purchased successfully!');
       navigate('/dashboard/myList');
     } catch (err) {
