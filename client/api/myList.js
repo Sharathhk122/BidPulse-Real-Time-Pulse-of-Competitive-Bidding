@@ -7,6 +7,6 @@ export const getMyList = async () => {
 };
 
 export const addToMyList = async (auctionId) => {
-  const response = await axios.post('/api/mylist/add', { auctionId });
+  const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/mylist/add`, { auctionId });
   return response.data;
 };
