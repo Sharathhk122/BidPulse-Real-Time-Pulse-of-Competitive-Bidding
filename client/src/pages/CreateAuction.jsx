@@ -147,7 +147,7 @@ const CreateAuction = () => {
         formDataToSend.append('images', image);
       });
 
-      await axios.post('/api/auctions', formDataToSend, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
