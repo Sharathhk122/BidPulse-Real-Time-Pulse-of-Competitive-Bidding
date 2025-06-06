@@ -87,7 +87,7 @@ const AuctionDetails = () => {
     const fetchAuction = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(`/api/auctions/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/auctions/${id}`);
         setAuction(data.data.auction);
         calculateTimeLeft(data.data.auction.endTime);
       } catch (err) {
