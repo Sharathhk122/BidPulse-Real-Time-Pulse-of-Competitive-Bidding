@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 export const getMyList = async () => {
-  const response = await axios.get('/api/mylist');
+   const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/mylist`);
   return response.data;
 };
 
