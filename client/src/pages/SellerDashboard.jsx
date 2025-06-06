@@ -128,7 +128,7 @@ const SellerDashboard = () => {
 
     const fetchAuctions = async () => {
       try {
-        const { data } = await axios.get('/api/auctions', { 
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { 
           params: { seller: user._id } 
         });
         const auctionsData = data.data?.auctions || data.auctions || [];
