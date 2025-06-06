@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
 
   const login = async (emailOrUsername, password) => {
     try {
-      const { data } = await axios.post('/auth/login', {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
         emailOrUsername,
         password
       });
