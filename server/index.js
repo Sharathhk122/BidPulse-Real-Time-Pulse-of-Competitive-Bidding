@@ -21,7 +21,7 @@ const app = express();
 
 // ✅ CORS FIX: Allow multiple frontends
 const allowedOrigins = [
-  'https://bidPulse.onrender.com'
+  'https://bid_Pulse.onrender.com'
  // for local dev
 ];
 
