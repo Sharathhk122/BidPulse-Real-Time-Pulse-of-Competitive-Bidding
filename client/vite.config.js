@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://bidpulse-real-time-pulse-of-competitive-l69x.onrender.com',
+        target: 'https://bidpulse-real-time-bid.onrender.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
