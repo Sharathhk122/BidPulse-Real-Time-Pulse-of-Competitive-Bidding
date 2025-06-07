@@ -9,8 +9,17 @@
   </head>
 
   <body>
-   
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- Add this script for client-side routing -->
+    <script>
+      // This handles the client-side routing fallback
+      (function() {
+        if (window.location.pathname !== '/' && !window.location.pathname.endsWith('.html')) {
+          const newUrl = window.location.pathname + '/';
+          window.history.replaceState({}, '', newUrl);
+        }
+      })();
+    </script>
   </body>
 </html>
