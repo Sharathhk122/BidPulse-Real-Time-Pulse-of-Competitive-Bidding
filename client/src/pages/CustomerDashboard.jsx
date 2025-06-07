@@ -63,6 +63,7 @@ const CustomerDashboard = () => {
           }),
           axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { winner: user._id, status: 'completed' } })
         ]);
+        
         const activeAuctions = auctionsRes.data.data.auctions.filter(
           a => a.status === 'active' && new Date(a.endTime) > new Date()
         );
@@ -406,7 +407,7 @@ const CustomerDashboard = () => {
                   <Tag 
                     icon={<TrophyOutlined className="text-yellow-300" />} 
                     className="shadow-lg bg-yellow-900/40 border-yellow-700/50 backdrop-blur-sm"
-                    >
+                  >
                     <span className="text-yellow-300 bg-gradient-to-r from-yellow-700/30 to-transparent px-2">
                       WINNING
                     </span>
@@ -434,25 +435,43 @@ const CustomerDashboard = () => {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        <div style={{ position: 'relative', zIndex: 10 }}>
+        <motion.div
+          initial={{ scale: 0.95 }}
+          animate={{ scale: 1 }}
+          whileHover={{ 
+            scale: 1.05,
+            rotateX: 5,
+            rotateY: 5
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+        >
           <Button 
             type="primary" 
             shape="round" 
-            icon={<EyeOutlined className="mr-1" />}
-            onClick={() => navigate(`/auctions/${record.auction._id}`)} 
-            className="border-0 shadow-lg hover:shadow-xl group"
+            onClick={() => navigate(`/auctions/${record.auction._id}`)}
+            className="border-0 shadow-lg hover:shadow-xl relative overflow-hidden group"
             style={{
               background: 'linear-gradient(45deg, #7c3aed, #ec4899)',
-              zIndex: 10,
-              position: 'relative'
+              transformStyle: 'preserve-3d'
             }}
           >
-            View Auction
+            <span className="relative z-10 flex items-center">
+              <EyeOutlined className="mr-1" />
+              View Auction
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 blur-md" />
+            <div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
+              style={{
+                transform: 'translateX(-100%) skewX(-30deg)',
+                transition: 'transform 0.6s'
+              }}
+            />
           </Button>
-        </div>
-      )
-    }
-    
+        </motion.div>
+      ),
+    },
   ];
 
   if (isLoading) return (
@@ -673,6 +692,7 @@ const CustomerDashboard = () => {
                         </th>
                       ),
                     }
+                    
                   }}
                 />
 
