@@ -256,10 +256,8 @@ const CustomerDashboard = () => {
       render: (amount, record) => {
         const auction = record.auction;
         const isWinning = auction.status === 'active' 
-          ? Math.abs(amount - auction.currentBid) < 0.01 // Floating point comparison
-          : auction.winner && 
-            (auction.winner._id === user._id || auction.winner === user._id) && 
-            Math.abs(amount - auction.currentBid) < 0.01;
+          ? amount === auction.currentBid
+          : auction.winner === user._id && amount === auction.currentBid;
         
         return (
           <motion.div
@@ -303,7 +301,7 @@ const CustomerDashboard = () => {
       key: 'currentBid',
       render: (_, record) => {
         const auction = record.auction;
-        const isLeading = Math.abs(record.amount - auction.currentBid) < 0.01;
+        const isLeading = record.amount === auction.currentBid;
         
         return (
           <motion.div
@@ -369,10 +367,8 @@ const CustomerDashboard = () => {
       render: (_, record) => {
         const auction = record.auction;
         const isWinning = auction.status === 'active' 
-          ? Math.abs(record.amount - auction.currentBid) < 0.01
-          : auction.winner && 
-            (auction.winner._id === user._id || auction.winner === user._id) && 
-            Math.abs(record.amount - auction.currentBid) < 0.01;
+          ? record.amount === auction.currentBid
+          : auction.winner === user._id && record.amount === auction.currentBid;
         
         return (
           <motion.div
@@ -700,10 +696,8 @@ const CustomerDashboard = () => {
                       value: bids.filter(bid => {
                         const auction = auctions.find(a => a._id === bid.auction?._id) || bid.auction;
                         return auction?.status === 'active' 
-                          ? Math.abs(bid.amount - auction.currentBid) < 0.01
-                          : auction?.winner && 
-                            (auction.winner._id === user._id || auction.winner === user._id) && 
-                            Math.abs(bid.amount - auction.currentBid) < 0.01;
+                          ? bid.amount === auction.currentBid
+                          : auction?.winner === user._id && bid.amount === auction.currentBid;
                       }).length,
                       icon: <TrophyOutlined />,
                       gradient: 'from-pink-600/40 to-rose-600/40',
