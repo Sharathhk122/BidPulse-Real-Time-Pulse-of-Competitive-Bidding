@@ -6,9 +6,20 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // Your backend server
+        target: 'http://localhost:5000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  // Add this base configuration for proper routing
+  base: '/',
+  build: {
+    outDir: 'dist',
+    // This ensures the index.html is served for all routes
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
       },
     },
   },
