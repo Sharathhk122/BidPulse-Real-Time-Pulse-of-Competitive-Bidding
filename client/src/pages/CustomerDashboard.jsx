@@ -54,14 +54,14 @@ const CustomerDashboard = () => {
     const fetchData = async () => {
       try {
         const [auctionsRes, bidsRes, purchasesRes] = await Promise.all([
-          axios.(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { status: 'active' } }),
-          axios.(`${import.meta.env.VITE_API_URL}/api/bids`, { 
+          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { status: 'active' } }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/bids`, { 
             params: { 
               user: user._id,
               populate: 'auction'
             } 
           }),
-          axios.(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { winner: user._id, status: 'completed' } })
+          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { winner: user._id, status: 'completed' } })
         ]);
         
         const activeAuctions = auctionsRes.data.data.auctions.filter(
