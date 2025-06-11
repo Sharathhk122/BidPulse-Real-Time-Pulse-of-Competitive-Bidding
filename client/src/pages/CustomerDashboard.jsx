@@ -54,14 +54,14 @@ const CustomerDashboard = () => {
     const fetchData = async () => {
       try {
         const [auctionsRes, bidsRes, purchasesRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { status: 'active' } }),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/bids`, { 
+          axios.get('/api/auctions', { params: { status: 'active' } }),
+          axios.get('/api/bids', { 
             params: { 
               user: user._id,
               populate: 'auction'
             } 
           }),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { winner: user._id, status: 'completed' } })
+          axios.get('/api/auctions', { params: { winner: user._id, status: 'completed' } })
         ]);
         
         const activeAuctions = auctionsRes.data.data.auctions.filter(
@@ -134,8 +134,7 @@ const CustomerDashboard = () => {
         return;
       }
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/bids`, { amount });
-      toast.success('Bid placed successfully!');
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/bids`, { amount });      toast.success('Bid placed successfully!');
 
       const updatedAuctions = auctions.map(a => 
         a._id === auctionId ? { ...a, currentBid: amount } : a
@@ -154,8 +153,7 @@ const CustomerDashboard = () => {
 
   const handleBuyNow = async (auctionId) => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/buy-now`);
-      toast.success('Purchased successfully!');
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/buy-now`);      toast.success('Purchased successfully!');
       
       setAuctions(prev => prev.filter(a => a._id !== auctionId));
       
@@ -257,7 +255,7 @@ const CustomerDashboard = () => {
         const auction = record.auction;
         const isWinning = auction.status === 'active' 
           ? amount === auction.currentBid
-          : auction.winner === user._id && amount === auction.currentBid;
+          : auction.winner?._id === user._id && amount === auction.currentBid;
         
         return (
           <motion.div
@@ -368,7 +366,7 @@ const CustomerDashboard = () => {
         const auction = record.auction;
         const isWinning = auction.status === 'active' 
           ? record.amount === auction.currentBid
-          : auction.winner === user._id && record.amount === auction.currentBid;
+          : auction.winner?._id === user._id && record.amount === auction.currentBid;
         
         return (
           <motion.div
@@ -379,7 +377,7 @@ const CustomerDashboard = () => {
           >
             <div className="relative">
               {auction.status === 'completed' ? (
-                isWinning ? (
+                auction.winner?._id === user._id && record.amount === auction.currentBid ? (
                   <Tooltip title="You won this auction!">
                     <Tag 
                       icon={<CheckOutlined className="text-green-300" />} 
@@ -453,6 +451,7 @@ const CustomerDashboard = () => {
         </div>
       )
     }
+    
   ];
 
   if (isLoading) return (
@@ -697,7 +696,7 @@ const CustomerDashboard = () => {
                         const auction = auctions.find(a => a._id === bid.auction?._id) || bid.auction;
                         return auction?.status === 'active' 
                           ? bid.amount === auction.currentBid
-                          : auction?.winner === user._id && bid.amount === auction.currentBid;
+                          : auction?.winner?._id === user._id && bid.amount === auction.currentBid;
                       }).length,
                       icon: <TrophyOutlined />,
                       gradient: 'from-pink-600/40 to-rose-600/40',
