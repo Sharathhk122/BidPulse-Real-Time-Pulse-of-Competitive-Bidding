@@ -21,7 +21,7 @@ const app = express();
 
 // ✅ CORS FIX: Allow multiple frontends
 const allowedOrigins = [
-  'https://bidpulse-sharath1.onrender.com'
+  'https://bidpulse-sharathhk1.onrender.com'
  // for local dev
 ];
 
