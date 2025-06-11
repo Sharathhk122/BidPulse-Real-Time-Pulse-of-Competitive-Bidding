@@ -54,14 +54,25 @@ const CustomerDashboard = () => {
     const fetchData = async () => {
       try {
         const [auctionsRes, bidsRes, purchasesRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { status: 'active' } }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { 
+            params: { 
+              status: 'active',
+              populate: 'winner bids.user'
+            } 
+          }),
           axios.get(`${import.meta.env.VITE_API_URL}/api/bids`, { 
             params: { 
               user: user._id,
               populate: 'auction'
             } 
           }),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { params: { winner: user._id, status: 'completed' } })
+          axios.get(`${import.meta.env.VITE_API_URL}/api/auctions`, { 
+            params: { 
+              winner: user._id, 
+              status: 'completed',
+              populate: 'winner bids.user'
+            } 
+          })
         ]);
         
         const activeAuctions = auctionsRes.data.data.auctions.filter(
@@ -101,7 +112,7 @@ const CustomerDashboard = () => {
     
     const handleBidUpdate = (updatedAuction) => {
       setAuctions(prev => prev.map(a => 
-        a._id === updatedAuction._id ? updatedAuction : a
+        a._id === updatedAuction._id ? { ...a, ...updatedAuction } : a
       ));
       
       setBidAmounts(prev => ({
@@ -110,14 +121,36 @@ const CustomerDashboard = () => {
       }));
     };
     
+    const handleAuctionComplete = (completedAuction) => {
+      setAuctions(prev => prev.filter(a => a._id !== completedAuction._id));
+      
+      // Update bids to reflect the completed status
+      setBids(prev => prev.map(bid => {
+        if (bid.auction?._id === completedAuction._id) {
+          return {
+            ...bid,
+            auction: completedAuction
+          };
+        }
+        return bid;
+      }));
+      
+      // If the current user won, add to purchases
+      if (completedAuction.winner?._id === user._id) {
+        setPurchases(prev => [...prev, completedAuction]);
+      }
+    };
+    
     socket.on('newAuction', handleNewAuction);
     socket.on('bidUpdate', handleBidUpdate);
+    socket.on('auctionComplete', handleAuctionComplete);
     
     return () => {
       socket.off('newAuction', handleNewAuction);
       socket.off('bidUpdate', handleBidUpdate);
+      socket.off('auctionComplete', handleAuctionComplete);
     };
-  }, [socket]);
+  }, [socket, user._id]);
 
   const handleBid = async (auctionId) => {
     try {
@@ -134,7 +167,8 @@ const CustomerDashboard = () => {
         return;
       }
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/bids`, { amount });      toast.success('Bid placed successfully!');
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/bids`, { amount });
+      toast.success('Bid placed successfully!');
 
       const updatedAuctions = auctions.map(a => 
         a._id === auctionId ? { ...a, currentBid: amount } : a
@@ -153,14 +187,24 @@ const CustomerDashboard = () => {
 
   const handleBuyNow = async (auctionId) => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/buy-now`);      toast.success('Purchased successfully!');
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${auctionId}/buy-now`);
+      const purchasedAuction = response.data.data.auction;
+      
+      toast.success('Purchased successfully!');
       
       setAuctions(prev => prev.filter(a => a._id !== auctionId));
+      setPurchases(prev => [...prev, purchasedAuction]);
       
-      const purchasedAuction = auctions.find(a => a._id === auctionId);
-      if (purchasedAuction) {
-        setPurchases(prev => [...prev, { ...purchasedAuction, status: 'completed' }]);
-      }
+      // Update bids to reflect the completed status
+      setBids(prev => prev.map(bid => {
+        if (bid.auction?._id === auctionId) {
+          return {
+            ...bid,
+            auction: purchasedAuction
+          };
+        }
+        return bid;
+      }));
     } catch (err) {
       toast.error(err.response?.data?.message || 'Purchase failed');
     }
@@ -185,9 +229,9 @@ const CustomerDashboard = () => {
     const seenUsers = new Set();
     
     for (const bid of sortedBids) {
-      if (!seenUsers.has(bid.user._id || bid.user)) {
+      if (!seenUsers.has(bid.user?._id || bid.user)) {
         uniqueBidders.push(bid);
-        seenUsers.add(bid.user._id || bid.user);
+        seenUsers.add(bid.user?._id || bid.user);
         if (uniqueBidders.length >= 3) break;
       }
     }
@@ -451,7 +495,6 @@ const CustomerDashboard = () => {
         </div>
       )
     }
-    
   ];
 
   if (isLoading) return (
@@ -607,7 +650,9 @@ const CustomerDashboard = () => {
                   dataSource={bids.map(bid => ({
                     ...bid,
                     key: bid._id,
-                    auction: auctions.find(a => a._id === bid.auction?._id) || bid.auction
+                    auction: auctions.find(a => a._id === bid.auction?._id) || 
+                            purchases.find(a => a._id === bid.auction?._id) || 
+                            bid.auction
                   }))}
                   pagination={false}
                   className="bg-transparent [&_.ant-table]:bg-transparent"
@@ -693,7 +738,9 @@ const CustomerDashboard = () => {
                     {
                       title: 'Winning Bids',
                       value: bids.filter(bid => {
-                        const auction = auctions.find(a => a._id === bid.auction?._id) || bid.auction;
+                        const auction = auctions.find(a => a._id === bid.auction?._id) || 
+                                      purchases.find(a => a._id === bid.auction?._id) || 
+                                      bid.auction;
                         return auction?.status === 'active' 
                           ? bid.amount === auction.currentBid
                           : auction?.winner?._id === user._id && bid.amount === auction.currentBid;
