@@ -5,13 +5,11 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
-import { FiClock, FiDollarSign, FiUser, FiPlus, FiMinus, FiArrowLeft } from 'react-icons/fi';
-import { Card, Button, Tag, Spin, Carousel, Grid } from 'antd';
+import { FiClock, FiDollarSign, FiUser, FiPlus, FiMinus } from 'react-icons/fi';
+import { Card, Button, Tag, Spin, Carousel } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash';
 import '../index.css';
-
-const { useBreakpoint } = Grid;
 
 // Custom Animation Components
 const RainbowText = ({ text, className }) => (
@@ -66,27 +64,35 @@ const FloatingElements = ({ count = 15 }) => (
 
 const AuctionDetails = () => {
   const { id } = useParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const socket = useSocket();
   const navigate = useNavigate();
-  const screens = useBreakpoint();
   const [auction, setAuction] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [bidAmount, setBidAmount] = useState('');
   const [isWatching, setIsWatching] = useState(false);
   const [timeLeft, setTimeLeft] = useState({});
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef(null);
 
-  // Auto-rotate images only on desktop
+  // Check if mobile on mount and resize
   useEffect(() => {
-    if (!screens.md) return; // Don't auto-rotate on mobile
-    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Auto-rotate images every 1 second
+  useEffect(() => {
     const interval = setInterval(() => {
       setActiveImageIndex(prev => (prev + 1) % (auction?.images?.length || 1));
-    }, 3000); // Slower rotation for better UX
+    }, 1000);
     return () => clearInterval(interval);
-  }, [auction?.images, screens.md]);
+  }, [auction?.images]);
 
   useEffect(() => {
     const fetchAuction = async () => {
@@ -95,20 +101,6 @@ const AuctionDetails = () => {
         const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/auctions/${id}`);
         setAuction(data.data.auction);
         calculateTimeLeft(data.data.auction.endTime);
-        
-        // Check if user is watching this auction
-        if (isAuthenticated && user?._id) {
-          try {
-            const watchlistRes = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`,
-              { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            );
-            setIsWatching(watchlistRes.data.watchlist.includes(id));
-          } catch (err) {
-            console.error('Failed to fetch watchlist:', err);
-            setIsWatching(false);
-          }
-        }
       } catch (err) {
         toast.error('Failed to fetch auction details');
         navigate('/');
@@ -135,7 +127,7 @@ const AuctionDetails = () => {
         socket.emit('leaveAuction', id);
       }
     };
-  }, [id, socket, navigate, user, isAuthenticated]);
+  }, [id, socket, navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -166,12 +158,6 @@ const AuctionDetails = () => {
   };
 
   const handlePlaceBid = throttle(async () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to place a bid');
-      navigate('/login', { state: { from: `/auctions/${id}` } });
-      return;
-    }
-
     if (!bidAmount || isNaN(bidAmount)) {
       toast.error('Please enter a valid bid amount');
       return;
@@ -184,11 +170,7 @@ const AuctionDetails = () => {
     }
 
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auctions/${id}/bids`, 
-        { amount: parseFloat(bidAmount) },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      );
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${id}/bids`, { amount: parseFloat(bidAmount) });
       toast.success('Bid placed successfully!');
       setBidAmount('');
     } catch (err) {
@@ -197,20 +179,10 @@ const AuctionDetails = () => {
   }, 1000);
 
   const handleBuyNow = async () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to use Buy Now');
-      navigate('/login', { state: { from: `/auctions/${id}` } });
-      return;
-    }
-
     if (!auction.buyNowPrice) return;
 
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auctions/${id}/buy-now`, 
-        { amount: auction.buyNowPrice },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      );
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${id}/buy-now`, { amount: auction.buyNowPrice });
       toast.success('Purchased successfully!');
       navigate('/dashboard/myList');
     } catch (err) {
@@ -218,32 +190,9 @@ const AuctionDetails = () => {
     }
   };
 
-  const toggleWatchlist = async () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to manage watchlist');
-      navigate('/login', { state: { from: `/auctions/${id}` } });
-      return;
-    }
-
-    try {
-      if (isWatching) {
-        await axios.delete(
-          `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist/${id}`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-        );
-      } else {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`, 
-          { auctionId: id },
-          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-        );
-      }
-      setIsWatching(!isWatching);
-      toast.success(!isWatching ? 'Added to watchlist' : 'Removed from watchlist');
-    } catch (err) {
-      console.error('Watchlist error:', err);
-      toast.error('Failed to update watchlist');
-    }
+  const toggleWatchlist = () => {
+    setIsWatching(!isWatching);
+    toast.success(!isWatching ? 'Added to watchlist' : 'Removed from watchlist');
   };
 
   const imageVariants = {
@@ -259,13 +208,7 @@ const AuctionDetails = () => {
 
   const renderTimeLeft = () => {
     if (timeLeft.ended) return 'Auction Ended';
-    
-    if (screens.xs) {
-      // Compact time display for mobile
-      return `${timeLeft.hours}h ${timeLeft.minutes}m`;
-    }
-    
-    return `${timeLeft.days > 0 ? `${timeLeft.days}d ` : ''}${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`;
+    return `${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`;
   };
 
   if (isLoading || !auction) {
@@ -279,20 +222,10 @@ const AuctionDetails = () => {
   const minBidAmount = auction.currentBid + (auction.bidIncrement || 1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 py-4 md:py-8 relative overflow-hidden">
-      <FloatingElements count={screens.md ? 15 : 8} />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 py-8 relative overflow-hidden">
+      <FloatingElements count={isMobile ? 8 : 15} />
       
-      {/* Back button for mobile */}
-      {!screens.md && (
-        <button 
-          onClick={() => navigate(-1)}
-          className="fixed top-4 left-4 z-50 bg-black/50 text-white p-2 rounded-full shadow-lg"
-        >
-          <FiArrowLeft size={24} />
-        </button>
-      )}
-      
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -305,7 +238,7 @@ const AuctionDetails = () => {
           >
             <div className="flex flex-col md:flex-row">
               {/* Image Gallery Section */}
-              <div className="w-full md:w-1/2 p-2 md:p-6">
+              <div className="w-full md:w-1/2 p-3 md:p-6">
                 <AnimatePresence mode='wait'>
                   <motion.div
                     key={activeImageIndex}
@@ -313,7 +246,7 @@ const AuctionDetails = () => {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="h-64 sm:h-80 md:h-96 relative rounded-xl overflow-hidden shadow-2xl"
+                    className="h-64 md:h-96 relative rounded-xl overflow-hidden shadow-2xl"
                   >
                     <img
                       src={auction.images[activeImageIndex] || '/default-item.png'}
@@ -323,7 +256,7 @@ const AuctionDetails = () => {
                     />
                     <Button
                       shape="circle"
-                      size={screens.md ? "large" : "middle"}
+                      size={isMobile ? "middle" : "large"}
                       className="absolute top-2 right-2 md:top-4 md:right-4 bg-purple-600 hover:bg-purple-700 text-white"
                       onClick={toggleWatchlist}
                       icon={isWatching ? <FiMinus /> : <FiPlus />}
@@ -331,65 +264,63 @@ const AuctionDetails = () => {
                   </motion.div>
                 </AnimatePresence>
 
-                <div className="flex justify-center mt-4 space-x-2 overflow-x-auto py-2">
-                  {auction.images.map((img, index) => (
-                    <motion.div
-                      key={index}
-                      variants={thumbnailVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                    >
-                      <img
-                        src={img}
-                        onClick={() => setActiveImageIndex(index)}
-                        className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 cursor-pointer rounded-lg border-2 transition-all ${
-                          index === activeImageIndex 
-                            ? 'border-purple-500 scale-110' 
-                            : 'border-transparent'
-                        }`}
-                        alt={`Thumbnail ${index + 1}`}
-                      />
-                    </motion.div>
-                  ))}
+                <div className="flex justify-start md:justify-center mt-4 md:mt-6 overflow-x-auto py-2 hide-scrollbar">
+                  <div className="flex space-x-2 md:space-x-3 min-w-max">
+                    {auction.images.map((img, index) => (
+                      <motion.div
+                        key={index}
+                        variants={thumbnailVariants}
+                        whileHover="hover"
+                        whileTap="tap"
+                        className="flex-shrink-0"
+                      >
+                        <img
+                          src={img}
+                          onClick={() => setActiveImageIndex(index)}
+                          className={`w-12 h-12 md:w-16 md:h-16 cursor-pointer rounded-lg border-2 transition-all ${
+                            index === activeImageIndex 
+                              ? 'border-purple-500 scale-110' 
+                              : 'border-transparent'
+                          }`}
+                          alt={`Thumbnail ${index + 1}`}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               {/* Auction Details Section */}
-              <div className="w-full md:w-1/2 p-4 md:p-6 bg-gradient-to-b from-blue-900/50 to-purple-900/50">
-                <div className="flex flex-col sm:flex-row justify-between items-start mb-4 md:mb-6 gap-2">
+              <div className="w-full md:w-1/2 p-3 md:p-6 bg-gradient-to-b from-blue-900/50 to-purple-900/50">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 md:mb-6">
                   <RainbowText 
                     text={auction.title} 
-                    className="text-xl sm:text-2xl md:text-3xl font-bold break-words" 
+                    className="text-2xl md:text-3xl font-bold mb-2 md:mb-0" 
                   />
-                  <Tag color={timeLeft.ended ? 'red' : 'cyan'} className="text-sm md:text-lg px-3 py-1">
-                    <FiClock className="inline mr-1" />
+                  <Tag 
+                    color={timeLeft.ended ? 'red' : 'cyan'} 
+                    className="text-base md:text-lg px-3 py-1 self-start md:self-auto"
+                  >
                     {renderTimeLeft()}
                   </Tag>
                 </div>
 
-                {/* Description for mobile */}
-                {!screens.md && (
-                  <div className="mb-4 text-gray-200 text-sm">
-                    {auction.description || 'No description provided'}
-                  </div>
-                )}
-
                 {/* Bidding Section */}
                 <motion.div 
-                  className="bg-black/20 p-4 md:p-6 rounded-xl backdrop-blur-sm mb-4 md:mb-6"
-                  whileHover={{ scale: screens.md ? 1.02 : 1 }}
+                  className="bg-black/20 p-4 md:p-6 rounded-xl backdrop-blur-sm"
+                  whileHover={{ scale: 1.02 }}
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 md:mb-6">
-                    <div className="text-center p-2 bg-black/20 rounded-lg">
-                      <div className="text-sm md:text-lg text-cyan-300">Current Bid</div>
-                      <div className="text-xl md:text-3xl font-bold text-green-400 neon-text">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
+                    <div className="text-center">
+                      <div className="text-base md:text-lg text-cyan-300">Current Bid</div>
+                      <div className="text-2xl md:text-3xl font-bold text-green-400 neon-text">
                         ${auction.currentBid?.toFixed(2)}
                       </div>
                     </div>
                     {auction.buyNowPrice && (
-                      <div className="text-center p-2 bg-black/20 rounded-lg">
-                        <div className="text-sm md:text-lg text-pink-300">Buy Now</div>
-                        <div className="text-xl md:text-3xl font-bold text-yellow-400 neon-text">
+                      <div className="text-center">
+                        <div className="text-base md:text-lg text-pink-300">Buy Now</div>
+                        <div className="text-2xl md:text-3xl font-bold text-yellow-400 neon-text">
                           ${auction.buyNowPrice.toFixed(2)}
                         </div>
                       </div>
@@ -398,27 +329,26 @@ const AuctionDetails = () => {
 
                   {!timeLeft.ended && (
                     <>
-                      <div className="mb-4">
+                      <div className="mb-4 md:mb-6">
                         <div className="flex flex-col sm:flex-row gap-2">
                           <input
                             type="number"
                             value={bidAmount}
                             onChange={(e) => setBidAmount(e.target.value)}
-                            className="flex-1 bg-black/30 border border-purple-500 text-white rounded-lg px-3 py-2 md:px-4 md:py-3 text-sm md:text-base"
-                            placeholder={`Min $${minBidAmount.toFixed(2)}`}
+                            className="flex-1 bg-black/30 border border-purple-500 text-white rounded-lg px-4 py-2 md:py-3"
+                            placeholder={`Min bid $${minBidAmount.toFixed(2)}`}
                             min={minBidAmount}
                             step="0.01"
                           />
                           <Button
                             type="primary"
                             shape="round"
-                            size={screens.md ? "large" : "middle"}
+                            size={isMobile ? "middle" : "large"}
                             className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
                             onClick={handlePlaceBid}
                             icon={<FiDollarSign />}
-                            block={!screens.md}
                           >
-                            {screens.md ? 'Place Bid' : 'Bid'}
+                            Place Bid
                           </Button>
                         </div>
                       </div>
@@ -428,11 +358,11 @@ const AuctionDetails = () => {
                           block
                           type="primary"
                           shape="round"
-                          size={screens.md ? "large" : "middle"}
+                          size={isMobile ? "middle" : "large"}
                           className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
                           onClick={handleBuyNow}
                         >
-                          {screens.md ? 'Instant Purchase' : 'Buy Now'}
+                          Instant Purchase
                         </Button>
                       )}
                     </>
@@ -440,41 +370,35 @@ const AuctionDetails = () => {
                 </motion.div>
 
                 {/* Bidding History */}
-                <div className="mt-4 md:mt-8">
-                  <h2 className="text-lg md:text-xl font-bold text-cyan-300 mb-2 md:mb-4">
-                    Bidding History
-                  </h2>
-                  <div className="h-32 md:h-40">
-                    <Carousel 
-                      ref={carouselRef} 
-                      dots={false} 
-                      autoplay 
-                      vertical
-                      autoplaySpeed={3000}
-                    >
-                      {auction.bids?.length > 0 ? (
-                        auction.bids.map((bid, index) => (
-                          <div key={index} className="p-2 md:p-4 bg-black/20 rounded-lg m-1 md:m-2">
-                            <div className="flex justify-between items-center text-purple-100">
-                              <div className="flex items-center">
-                                <FiUser className="mr-1 md:mr-2 text-cyan-400" />
-                                <span className="text-sm md:text-base font-medium truncate max-w-[100px] md:max-w-[150px]">
-                                  {bid.user?.username || 'Anonymous'}
-                                </span>
-                              </div>
-                              <span className="text-sm md:text-base font-bold text-green-400">
-                                ${bid.amount.toFixed(2)}
+                <div className="mt-4 md:mt-6">
+                  <h2 className="text-lg md:text-xl font-bold text-cyan-300 mb-2 md:mb-4">Bidding History</h2>
+                  <Carousel 
+                    ref={carouselRef} 
+                    dots={false} 
+                    autoplay 
+                    vertical
+                    className="h-40 md:h-48"
+                  >
+                    {auction.bids?.length > 0 ? (
+                      auction.bids.map((bid, index) => (
+                        <div key={index} className="p-2 md:p-4 bg-black/20 rounded-lg m-1 md:m-2">
+                          <div className="flex justify-between items-center text-purple-100 text-sm md:text-base">
+                            <div className="flex items-center">
+                              <FiUser className="mr-2 text-cyan-400" />
+                              <span className="font-medium truncate max-w-[100px] md:max-w-none">
+                                {bid.user?.username || 'Anonymous'}
                               </span>
                             </div>
+                            <span className="font-bold text-green-400">
+                              ${bid.amount.toFixed(2)}
+                            </span>
                           </div>
-                        ))
-                      ) : (
-                        <div className="p-2 md:p-4 text-gray-400 text-sm md:text-base">
-                          No bids placed yet
                         </div>
-                      )}
-                    </Carousel>
-                  </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-gray-400">No bids placed yet</div>
+                    )}
+                  </Carousel>
                 </div>
               </div>
             </div>
@@ -519,24 +443,14 @@ const AuctionDetails = () => {
         .ant-card-hoverable:hover {
           box-shadow: 0 0 30px rgba(159, 122, 234, 0.3) !important;
         }
-
-        /* Custom scrollbar for thumbnails */
-        .overflow-x-auto::-webkit-scrollbar {
-          height: 4px;
+        
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
-
-        .overflow-x-auto::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-        }
-
-        .overflow-x-auto::-webkit-scrollbar-thumb {
-          background: rgba(159, 122, 234, 0.5);
-          border-radius: 10px;
-        }
-
-        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-          background: rgba(159, 122, 234, 0.8);
+        
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </div>
