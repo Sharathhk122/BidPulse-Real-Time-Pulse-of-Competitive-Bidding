@@ -18,7 +18,8 @@ import {
   Statistic,
   Divider,
   Progress,
-  Tooltip
+  Tooltip,
+  Grid
 } from 'antd';
 import { 
   ClockCircleOutlined, 
@@ -37,6 +38,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import AuctionCard from '../components/AuctionCard';
 
+const { useBreakpoint } = Grid;
+
 const CustomerDashboard = () => {
   const { user } = useAuth();
   const socket = useSocket();
@@ -49,6 +52,7 @@ const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [parent] = useAutoAnimate();
   const [isHovering, setIsHovering] = useState(null);
+  const screens = useBreakpoint();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,7 +128,6 @@ const CustomerDashboard = () => {
     const handleAuctionComplete = (completedAuction) => {
       setAuctions(prev => prev.filter(a => a._id !== completedAuction._id));
       
-      // Update bids to reflect the completed status
       setBids(prev => prev.map(bid => {
         if (bid.auction?._id === completedAuction._id) {
           return {
@@ -135,7 +138,6 @@ const CustomerDashboard = () => {
         return bid;
       }));
       
-      // If the current user won, add to purchases
       if (completedAuction.winner?._id === user._id) {
         setPurchases(prev => [...prev, completedAuction]);
       }
@@ -195,7 +197,6 @@ const CustomerDashboard = () => {
       setAuctions(prev => prev.filter(a => a._id !== auctionId));
       setPurchases(prev => [...prev, purchasedAuction]);
       
-      // Update bids to reflect the completed status
       setBids(prev => prev.map(bid => {
         if (bid.auction?._id === auctionId) {
           return {
@@ -265,7 +266,7 @@ const CustomerDashboard = () => {
             <Avatar 
               src={auction.images?.[0]} 
               shape="square" 
-              size={48}
+              size={screens.xs ? 32 : 48}
               className="rounded-lg mr-3 transform transition-transform duration-300 hover:rotate-2"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-purple-600/30 to-transparent rounded-lg" />
@@ -295,6 +296,7 @@ const CustomerDashboard = () => {
       title: 'Your Bid',
       dataIndex: 'amount',
       key: 'amount',
+      responsive: ['md'],
       render: (amount, record) => {
         const auction = record.auction;
         const isWinning = auction.status === 'active' 
@@ -341,6 +343,7 @@ const CustomerDashboard = () => {
     {
       title: 'Current Bid',
       key: 'currentBid',
+      responsive: ['md'],
       render: (_, record) => {
         const auction = record.auction;
         const isLeading = record.amount === auction.currentBid;
@@ -378,6 +381,7 @@ const CustomerDashboard = () => {
     {
       title: 'Difference',
       key: 'difference',
+      responsive: ['md'],
       render: (_, record) => {
         const auction = record.auction;
         const difference = record.amount - auction.currentBid;
@@ -481,7 +485,8 @@ const CustomerDashboard = () => {
           <Button 
             type="primary" 
             shape="round" 
-            icon={<EyeOutlined className="mr-1" />}
+            size={screens.xs ? 'small' : 'middle'}
+            icon={<EyeOutlined className={screens.xs ? '' : "mr-1"} />}
             onClick={() => navigate(`/auctions/${record.auction._id}`)} 
             className="border-0 shadow-lg hover:shadow-xl group"
             style={{
@@ -490,7 +495,7 @@ const CustomerDashboard = () => {
               position: 'relative'
             }}
           >
-            View Auction
+            {screens.xs ? '' : 'View Auction'}
           </Button>
         </div>
       )
@@ -569,6 +574,7 @@ const CustomerDashboard = () => {
             onChange={setActiveTab}
             tabBarStyle={{ marginBottom: 24 }}
             className="custom-tabs"
+            tabBarGutter={screens.xs ? 8 : 16}
           >
             <Tabs.TabPane 
               tab={
@@ -581,13 +587,13 @@ const CustomerDashboard = () => {
                   className="flex items-center text-white"
                   style={{
                     background: 'linear-gradient(145deg, #7e22ce, #9333ea)',
-                    padding: '8px 16px',
+                    padding: screens.xs ? '6px 12px' : '8px 16px',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                   }}
                 >
-                  <ShoppingCartOutlined className="mr-2" />
-                  Browse Auctions
+                  <ShoppingCartOutlined className={screens.xs ? '' : "mr-2"} />
+                  {screens.xs ? '' : 'Browse Auctions'}
                 </motion.span>
               } 
               key="browse"
@@ -629,13 +635,13 @@ const CustomerDashboard = () => {
                   className="flex items-center text-white"
                   style={{
                     background: 'linear-gradient(145deg, #059669, #10b981)',
-                    padding: '8px 16px',
+                    padding: screens.xs ? '6px 12px' : '8px 16px',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                   }}
                 >
-                  <DollarOutlined className="mr-2" />
-                  My Bids
+                  <DollarOutlined className={screens.xs ? '' : "mr-2"} />
+                  {screens.xs ? '' : 'My Bids'}
                 </motion.span>
               } 
               key="bids"
@@ -663,6 +669,8 @@ const CustomerDashboard = () => {
                     hover:!from-purple-800/40 hover:!to-blue-800/40 
                     transition-all duration-300 backdrop-blur-sm`
                   }
+                  scroll={{ x: true }}
+                  size={screens.xs ? 'small' : 'middle'}
                   components={{
                     body: {
                       wrapper: ({ children }) => (
@@ -806,7 +814,7 @@ const CustomerDashboard = () => {
                           }
                           valueStyle={{ 
                             color: stat.color.replace('text-', '').replace('-200', '-300'),
-                            fontSize: '24px',
+                            fontSize: screens.xs ? '20px' : '24px',
                             textShadow: '0 0 10px currentColor'
                           }}
                         />
