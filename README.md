@@ -1,5 +1,9 @@
 
 # 🎯 **BidPulse** – Real-Time Pulse of Competitive Bidding
+## 🌐 Live Demo
+
+🚀 Check out the live deployed BidPulse LiveAuction project here:  
+👉 [BidPulse LiveAuction Live](https://bidpulse-liveauction.onrender.com/)
 
 ![BidPulse Logo](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/images/Screenshot%20\(1012\).png)
 
