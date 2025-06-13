@@ -66,7 +66,7 @@ const FloatingElements = ({ count = 15 }) => (
 
 const AuctionDetails = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const socket = useSocket();
   const navigate = useNavigate();
   const screens = useBreakpoint();
@@ -97,9 +97,17 @@ const AuctionDetails = () => {
         calculateTimeLeft(data.data.auction.endTime);
         
         // Check if user is watching this auction
-        if (user) {
-          const watchlistRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`);
-          setIsWatching(watchlistRes.data.watchlist.includes(id));
+        if (isAuthenticated && user?._id) {
+          try {
+            const watchlistRes = await axios.get(
+              `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`,
+              { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            );
+            setIsWatching(watchlistRes.data.watchlist.includes(id));
+          } catch (err) {
+            console.error('Failed to fetch watchlist:', err);
+            setIsWatching(false);
+          }
         }
       } catch (err) {
         toast.error('Failed to fetch auction details');
@@ -127,7 +135,7 @@ const AuctionDetails = () => {
         socket.emit('leaveAuction', id);
       }
     };
-  }, [id, socket, navigate, user]);
+  }, [id, socket, navigate, user, isAuthenticated]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -158,9 +166,9 @@ const AuctionDetails = () => {
   };
 
   const handlePlaceBid = throttle(async () => {
-    if (!user) {
+    if (!isAuthenticated) {
       toast.error('Please login to place a bid');
-      navigate('/login');
+      navigate('/login', { state: { from: `/auctions/${id}` } });
       return;
     }
 
@@ -176,7 +184,11 @@ const AuctionDetails = () => {
     }
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${id}/bids`, { amount: parseFloat(bidAmount) });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auctions/${id}/bids`, 
+        { amount: parseFloat(bidAmount) },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      );
       toast.success('Bid placed successfully!');
       setBidAmount('');
     } catch (err) {
@@ -185,16 +197,20 @@ const AuctionDetails = () => {
   }, 1000);
 
   const handleBuyNow = async () => {
-    if (!user) {
+    if (!isAuthenticated) {
       toast.error('Please login to use Buy Now');
-      navigate('/login');
+      navigate('/login', { state: { from: `/auctions/${id}` } });
       return;
     }
 
     if (!auction.buyNowPrice) return;
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auctions/${id}/buy-now`, { amount: auction.buyNowPrice });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auctions/${id}/buy-now`, 
+        { amount: auction.buyNowPrice },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      );
       toast.success('Purchased successfully!');
       navigate('/dashboard/myList');
     } catch (err) {
@@ -203,21 +219,29 @@ const AuctionDetails = () => {
   };
 
   const toggleWatchlist = async () => {
-    if (!user) {
+    if (!isAuthenticated) {
       toast.error('Please login to manage watchlist');
-      navigate('/login');
+      navigate('/login', { state: { from: `/auctions/${id}` } });
       return;
     }
 
     try {
       if (isWatching) {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist/${id}`);
+        await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist/${id}`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        );
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`, { auctionId: id });
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`, 
+          { auctionId: id },
+          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        );
       }
       setIsWatching(!isWatching);
       toast.success(!isWatching ? 'Added to watchlist' : 'Removed from watchlist');
     } catch (err) {
+      console.error('Watchlist error:', err);
       toast.error('Failed to update watchlist');
     }
   };
