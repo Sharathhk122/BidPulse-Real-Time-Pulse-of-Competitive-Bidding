@@ -49,37 +49,38 @@
 
 ## 📸 Screenshots
 
-### Screenshot (1049)
+### Login Page
 ![Screenshot (1049)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1049).png)
 
-### Screenshot (1050)
+### customer page
 ![Screenshot (1050)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1050).png)
 
-### Screenshot (1051)
+### customer page
 ![Screenshot (1051)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1051).png)
 
-### Screenshot (1052)
+### customer page
 ![Screenshot (1052)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1052).png)
 
-### Screenshot (1053)
+### my bids page
 ![Screenshot (1053)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1053).png)
 
+### Auction details page
 ![Screenshot (1056)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1056).png)
 
-### Screenshot (1057)
+### signup page
 ![Screenshot (1057)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1057).png)
 
-### Screenshot (1058)
+### signup page
 ![Screenshot (1058)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1058).png)
 
 
-### Screenshot (1060)
+### seller page
 ![Screenshot (1060)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1060).png)
 
-### Screenshot (1061)
+### seller page
 ![Screenshot (1061)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1061).png)
 
-### Screenshot (1062)
+### create acution page
 ![Screenshot (1062)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1062).png)
 
 ---
