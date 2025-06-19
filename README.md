@@ -49,39 +49,64 @@
 
 ## 📸 Screenshots
 
-### Login Page
-![Screenshot (1049)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1049).png)
+Welcome to the visual tour of **BidPulse – Real-Time Pulse of Competitive Bidding**. Below are the major screens that show the flow of the application for both **customers** and **sellers**.
 
-### customer page
-![Screenshot (1050)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1050).png)
+---
 
-### customer page
-![Screenshot (1051)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1051).png)
+### 🔐 Login Page
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1049).png" alt="Login Page" width="800"/>
 
-### customer page
-![Screenshot (1052)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1052).png)
+---
 
-### my bids page
-![Screenshot (1053)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1053).png)
+### 👤 Customer Dashboard
 
-### Auction details page
-![Screenshot (1056)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1056).png)
+#### 🏠 Home Page
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1050).png" alt="Customer Page 1" width="800"/>
 
-### signup page
-![Screenshot (1057)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1057).png)
+#### 🛒 Auction Listings
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1051).png" alt="Customer Page 2" width="800"/>
 
-### signup page
-![Screenshot (1058)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1058).png)
+#### 📋 Auction Detail View
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1052).png" alt="Customer Page 3" width="800"/>
 
+---
 
-### seller page
-![Screenshot (1060)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1060).png)
+### 📈 My Bids Page
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1053).png" alt="My Bids Page" width="800"/>
 
-### seller page
-![Screenshot (1061)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1061).png)
+---
 
-### create acution page
-![Screenshot (1062)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1062).png)
+### 🧾 Auction Details Page
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1056).png" alt="Auction Details Page" width="800"/>
+
+---
+
+### 📝 Signup Page
+
+#### Create Account – Step 1
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1057).png" alt="Signup Page 1" width="800"/>
+
+#### Create Account – Step 2
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1058).png" alt="Signup Page 2" width="800"/>
+
+---
+
+### 🏪 Seller Dashboard
+
+#### Seller Product List
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1060).png" alt="Seller Page 1" width="800"/>
+
+#### Seller Auction Stats
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1061).png" alt="Seller Page 2" width="800"/>
+
+---
+
+### ➕ Create Auction Page
+<img src="https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1062).png" alt="Create Auction Page" width="800"/>
+
+---
+
+> 💡 *All screenshots represent live, real-time functionality of BidPulse built using React, Node.js, and MongoDB with real-time WebSocket support.*
 
 ---
 
