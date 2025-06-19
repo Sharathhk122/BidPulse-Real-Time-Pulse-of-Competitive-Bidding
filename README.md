@@ -47,7 +47,40 @@
   </tr>
 </table>
 
-> *Modernized interface with vibrant visuals and streamlined user experience!*
+## 📸 Screenshots
+
+### Screenshot (1049)
+![Screenshot (1049)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1049).png)
+
+### Screenshot (1050)
+![Screenshot (1050)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1050).png)
+
+### Screenshot (1051)
+![Screenshot (1051)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1051).png)
+
+### Screenshot (1052)
+![Screenshot (1052)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1052).png)
+
+### Screenshot (1053)
+![Screenshot (1053)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1053).png)
+
+![Screenshot (1056)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1056).png)
+
+### Screenshot (1057)
+![Screenshot (1057)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1057).png)
+
+### Screenshot (1058)
+![Screenshot (1058)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1058).png)
+
+
+### Screenshot (1060)
+![Screenshot (1060)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1060).png)
+
+### Screenshot (1061)
+![Screenshot (1061)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1061).png)
+
+### Screenshot (1062)
+![Screenshot (1062)](https://github.com/Sharathhk122/BidPulse-Real-Time-Pulse-of-Competitive-Bidding/blob/main/Screenshot%20(1062).png)
 
 ---
 
