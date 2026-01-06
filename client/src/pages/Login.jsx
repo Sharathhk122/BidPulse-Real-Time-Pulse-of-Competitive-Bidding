@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Input, Button, Typography, Divider, Space, Spin, Checkbox, Form, Alert, Card } from 'antd';
-import { MailOutlined, LockOutlined, GithubOutlined, GoogleOutlined, TwitterOutlined, UserOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { Input, Button, Typography, Divider, Space, Spin, Checkbox, Form, Alert, Card, Modal } from 'antd';
+import { MailOutlined, LockOutlined, GithubOutlined, GoogleOutlined, TwitterOutlined, UserOutlined, EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined } from '@ant-design/icons';
 import { motion, useAnimation, useTransform, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import Particles from 'react-tsparticles';
@@ -402,6 +402,125 @@ const CyberOTPInput = styled(Input)`
   }
 `;
 
+// Test Credentials Modal Component
+const TestCredentialsModal = ({ visible, onClose }) => {
+  const credentials = [
+    { neuralId: 'sharath1', encryptionKey: 'Sharathhk@123' },
+    { neuralId: 'sharath3', encryptionKey: 'Sharathhk@123' }
+  ];
+
+  return (
+    <Modal
+      title={
+        <span style={{
+          background: 'linear-gradient(45deg, #ff4dff, #23d5ab)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontSize: '1.2rem',
+          fontWeight: 'bold'
+        }}>
+          TEST CREDENTIALS
+        </span>
+      }
+      open={visible}
+      onCancel={onClose}
+      footer={[
+        <Button
+          key="close"
+          onClick={onClose}
+          style={{
+            background: 'linear-gradient(45deg, #ff4dff, #23a6d5)',
+            border: 'none',
+            color: '#0f0c29',
+            fontWeight: 'bold'
+          }}
+        >
+          CLOSE
+        </Button>
+      ]}
+      centered
+      className="cyber-modal"
+      styles={{
+        body: {
+          background: 'rgba(15, 12, 41, 0.95)',
+          border: '1px solid rgba(255, 77, 255, 0.2)',
+          borderRadius: '10px',
+          padding: '20px'
+        },
+        header: {
+          background: 'rgba(0, 0, 0, 0.9)',
+          borderBottom: '1px solid rgba(255, 77, 255, 0.2)'
+        },
+        footer: {
+          background: 'rgba(0, 0, 0, 0.9)',
+          borderTop: '1px solid rgba(255, 77, 255, 0.2)'
+        }
+      }}
+    >
+      <div className="space-y-4">
+        <Alert
+          message="Use these credentials for testing"
+          description="Copy and paste these credentials to test the login functionality"
+          type="info"
+          showIcon
+          style={{
+            background: 'rgba(0, 0, 0, 0.7)',
+            border: '1px solid rgba(35, 166, 213, 0.3)',
+            color: 'rgba(200, 255, 200, 0.9)'
+          }}
+        />
+        
+        <div className="space-y-3">
+          {credentials.map((cred, index) => (
+            <Card
+              key={index}
+              style={{
+                background: 'rgba(0, 0, 0, 0.8)',
+                border: '1px solid rgba(255, 77, 255, 0.3)',
+                borderRadius: '10px'
+              }}
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span style={{ color: '#23a6d5', fontWeight: 'bold' }}>NEURAL ID:</span>
+                    <code style={{ color: '#23d5ab', fontSize: '1rem' }}>{cred.neuralId}</code>
+                  </div>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <span style={{ color: '#23a6d5', fontWeight: 'bold' }}>ENCRYPTION KEY:</span>
+                    <code style={{ color: '#ff4dff', fontSize: '1rem' }}>{cred.encryptionKey}</code>
+                  </div>
+                </div>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`Neural ID: ${cred.neuralId}\nEncryption Key: ${cred.encryptionKey}`);
+                    toast.success('Credentials copied to clipboard!');
+                  }}
+                  style={{
+                    background: 'rgba(35, 213, 171, 0.2)',
+                    borderColor: '#23d5ab',
+                    color: '#23d5ab'
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        <div className="mt-4 p-3 rounded-lg" style={{ background: 'rgba(255, 77, 255, 0.1)' }}>
+          <Text className="text-blue-100 text-sm">
+            <InfoCircleOutlined className="mr-2" />
+            These are test accounts. Use 'sharath1' for regular user and 'sharath3' for seller account.
+          </Text>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -420,6 +539,8 @@ const Login = () => {
   const [otp, setOtp] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState(null);
+  const [showTestCredentials, setShowTestCredentials] = useState(false);
+  const [autoFillCredentials, setAutoFillCredentials] = useState(null);
 
   const particlesInit = async (engine) => {
     await loadFull(engine);
@@ -496,6 +617,14 @@ const Login = () => {
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to resend OTP');
     }
+  };
+
+  // Auto-fill test credentials
+  const fillTestCredentials = (neuralId, encryptionKey) => {
+    setEmailOrUsername(neuralId);
+    setPassword(encryptionKey);
+    setAutoFillCredentials({ neuralId, encryptionKey });
+    toast.success(`Auto-filled: ${neuralId}`);
   };
 
   // 3D Animation variants
@@ -670,6 +799,11 @@ const Login = () => {
                     NEURAL ID
                   </motion.span>
                 }
+                extra={
+                  <Text className="text-xs text-blue-300">
+                    Use 'sharath1' or 'sharath3'
+                  </Text>
+                }
               >
                 <CyberInput
                   placeholder="Enter your neural ID"
@@ -690,6 +824,11 @@ const Login = () => {
                   >
                     ENCRYPTION KEY
                   </motion.span>
+                }
+                extra={
+                  <Text className="text-xs text-blue-300">
+                    Use 'Sharathhk@123'
+                  </Text>
                 }
               >
                 <CyberPasswordInput
@@ -712,6 +851,50 @@ const Login = () => {
                   Remember my neural pattern
                 </CyberCheckbox>
               </Form.Item>
+
+              {/* Auto-fill buttons */}
+              <motion.div
+                className="mb-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="flex space-x-2 mb-2">
+                  <Button
+                    size="small"
+                    onClick={() => fillTestCredentials('sharath1', 'Sharathhk@123')}
+                    style={{
+                      background: 'rgba(35, 166, 213, 0.2)',
+                      borderColor: '#23a6d5',
+                      color: '#23a6d5',
+                      flex: 1
+                    }}
+                  >
+                    Auto-fill User
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={() => fillTestCredentials('sharath3', 'Sharathhk@123')}
+                    style={{
+                      background: 'rgba(255, 77, 255, 0.2)',
+                      borderColor: '#ff4dff',
+                      color: '#ff4dff',
+                      flex: 1
+                    }}
+                  >
+                    Auto-fill Seller
+                  </Button>
+                </div>
+                <Button
+                  type="link"
+                  onClick={() => setShowTestCredentials(true)}
+                  style={{ color: '#23d5ab', padding: 0 }}
+                  className="text-xs"
+                >
+                  <InfoCircleOutlined className="mr-1" />
+                  View all test credentials
+                </Button>
+              </motion.div>
             </motion.div>
 
             <motion.div
@@ -884,7 +1067,7 @@ const Login = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
         >
-          <Text>v2.5.8 • Nexus Security Protocol</Text>
+          <Text>v2.5.8 • Nexus Security Protocol • Test Mode Active</Text>
         </motion.div>
       </Card3D>
 
@@ -913,6 +1096,12 @@ const Login = () => {
           ease: "easeInOut",
           delay: 2
         }}
+      />
+
+      {/* Test Credentials Modal */}
+      <TestCredentialsModal 
+        visible={showTestCredentials}
+        onClose={() => setShowTestCredentials(false)}
       />
     </AnimatedContainer>
   );
