@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, HomeOutlined, EnvironmentOutlined } from '@ant-design/icons';
-import { Form, Input, Button, Radio, Upload, Select, message, Typography } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, HomeOutlined, EnvironmentOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Radio, Upload, Select, message, Typography, Modal, Alert } from 'antd';
 import axios from 'axios';
 import { motion, useAnimation } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
 
 const { Option } = Select;
 const { TextArea } = Input;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 // Advanced 3D Animation keyframes
 const float = keyframes`
@@ -432,7 +432,7 @@ const RippleEffect = styled.div`
     animation: ${ripple} 8s linear infinite;
     animation-delay: ${props => props.delay || '0s'};
     
-    &:n极child(1) {
+    &:nth-child(1) {
       width: 800px;
       height: 800px;
       top: -200px;
@@ -487,6 +487,189 @@ const StrengthLabel = styled.div`
   transition: all 0.3s ease;
 `;
 
+const TestCredentialsModal = ({ visible, onClose }) => {
+  const credentials = [
+    { neuralId: 'sharath1', encryptionKey: 'Sharathhk@123', role: 'customer' },
+    { neuralId: 'sharath3', encryptionKey: 'Sharathhk@123', role: 'seller' }
+  ];
+
+  return (
+    <Modal
+      title={
+        <span style={{
+          background: 'linear-gradient(45deg, #ff00ff, #00ffff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontSize: '1.5rem',
+          fontWeight: 'bold'
+        }}>
+          TEST CREDENTIALS FOR LOGIN
+        </span>
+      }
+      open={visible}
+      onCancel={onClose}
+      footer={[
+        <Button
+          key="login"
+          onClick={() => window.location.href = '/login'}
+          style={{
+            background: 'linear-gradient(45deg, #ff00ff, #cc00ff)',
+            border: 'none',
+            color: '#fff',
+            fontWeight: 'bold',
+            marginRight: '10px'
+          }}
+        >
+          GO TO LOGIN
+        </Button>,
+        <Button
+          key="close"
+          onClick={onClose}
+          style={{
+            background: 'rgba(0,0,0,0.5)',
+            border: '1px solid rgba(124, 58, 237, 0.7)',
+            color: '#fff'
+          }}
+        >
+          CLOSE
+        </Button>
+      ]}
+      centered
+      width={600}
+      className="cyber-modal"
+      styles={{
+        body: {
+          background: 'linear-gradient(145deg, #0f0c29, #302b63)',
+          border: '1px solid rgba(255, 0, 255, 0.3)',
+          borderRadius: '10px',
+          padding: '20px'
+        },
+        header: {
+          background: 'rgba(0, 0, 0, 0.8)',
+          borderBottom: '1px solid rgba(255, 0, 255, 0.3)'
+        },
+        footer: {
+          background: 'rgba(0, 0, 0, 0.8)',
+          borderTop: '1px solid rgba(255, 0, 255, 0.3)'
+        }
+      }}
+    >
+      <div className="space-y-6">
+        <Alert
+          message={
+            <div>
+              <div className="font-bold text-lg mb-2">⚠️ IMPORTANT: SMTP Blocked on Render</div>
+              <div className="text-sm">
+                Render does NOT allow raw SMTP (like Gmail SMTP) by default. 
+                OTP emails won't work in production until you configure a proper email service.
+              </div>
+            </div>
+          }
+          description="Use these pre-created accounts for testing instead of signing up new accounts:"
+          type="warning"
+          showIcon
+          style={{
+            background: 'rgba(255, 153, 0, 0.1)',
+            border: '1px solid rgba(255, 153, 0, 0.5)',
+            color: '#fff'
+          }}
+        />
+        
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {credentials.map((cred, index) => (
+              <div
+                key={index}
+                className="p-4 rounded-lg"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  border: '1px solid rgba(124, 58, 237, 0.5)',
+                  borderRadius: '10px'
+                }}
+              >
+                <div className="flex items-center mb-3">
+                  <div className={`w-3 h-3 rounded-full mr-2 ${cred.role === 'seller' ? 'bg-pink-500' : 'bg-blue-500'}`}></div>
+                  <span className="text-lg font-semibold" style={{ 
+                    color: cred.role === 'seller' ? '#ff00ff' : '#00ffff' 
+                  }}>
+                    {cred.role === 'seller' ? 'Seller Account' : 'Customer Account'}
+                  </span>
+                </div>
+                
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm text-purple-300 mb-1">NEURAL ID:</div>
+                    <div className="flex items-center justify-between">
+                      <code className="text-lg font-mono text-green-400">{cred.neuralId}</code>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          navigator.clipboard.writeText(cred.neuralId);
+                          message.success('Neural ID copied!');
+                        }}
+                        style={{
+                          background: 'rgba(35, 213, 171, 0.2)',
+                          borderColor: '#23d5ab',
+                          color: '#23d5ab'
+                        }}
+                      >
+                        Copy
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm text-purple-300 mb-1">ENCRYPTION KEY:</div>
+                    <div className="flex items-center justify-between">
+                      <code className="text-lg font-mono text-pink-400">{cred.encryptionKey}</code>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          navigator.clipboard.writeText(cred.encryptionKey);
+                          message.success('Encryption key copied!');
+                        }}
+                        style={{
+                          background: 'rgba(255, 77, 255, 0.2)',
+                          borderColor: '#ff4dff',
+                          color: '#ff4dff'
+                        }}
+                      >
+                        Copy
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-4 rounded-lg" style={{ 
+            background: 'rgba(124, 58, 237, 0.1)', 
+            border: '1px solid rgba(124, 58, 237, 0.3)' 
+          }}>
+            <div className="flex items-start">
+              <InfoCircleOutlined className="text-purple-400 text-lg mr-3 mt-1" />
+              <div className="text-sm text-purple-200">
+                <p className="font-semibold mb-2">How to use:</p>
+                <ol className="list-decimal pl-4 space-y-1">
+                  <li>Click "GO TO LOGIN" button above</li>
+                  <li>Use <strong>sharath1</strong> for regular customer access</li>
+                  <li>Use <strong>sharath3</strong> for seller dashboard access</li>
+                  <li>Encryption key for both accounts is: <strong>Sharathhk@123</strong></li>
+                </ol>
+                <p className="mt-3 text-yellow-300">
+                  <strong>Note:</strong> Signup is currently disabled due to SMTP restrictions on Render. 
+                  Use existing test accounts instead.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 const Signup = () => {
   const [role, setRole] = useState('customer');
   const [form] = Form.useForm();
@@ -503,6 +686,8 @@ const Signup = () => {
     capital: false,
     symbol: false
   });
+  const [showTestCredentials, setShowTestCredentials] = useState(false);
+  const [showSMTPWarning, setShowSMTPWarning] = useState(true);
 
   useEffect(() => {
     controls.start({
@@ -656,6 +841,61 @@ const Signup = () => {
           <HolographicOverlay />
           <ScanLines />
           <div className="flex flex-col relative z-10">
+            {/* SMTP Warning Banner */}
+            {showSMTPWarning && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mb-6"
+              >
+                <Alert
+                  message={
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-bold">⚠️ SMTP Service Issue</span>
+                        <span className="ml-2">OTP emails won't work on Render</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="small"
+                          onClick={() => setShowTestCredentials(true)}
+                          style={{
+                            background: 'linear-gradient(45deg, #ff00ff, #cc00ff)',
+                            border: 'none',
+                            color: '#fff'
+                          }}
+                        >
+                          View Test Accounts
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() => setShowSMTPWarning(false)}
+                          style={{
+                            background: 'rgba(255,255,255,0.1)',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            color: '#fff'
+                          }}
+                        >
+                          Dismiss
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                  description="Use existing test accounts instead of signing up. Click 'View Test Accounts' for login details."
+                  type="warning"
+                  showIcon
+                  closable={false}
+                  style={{
+                    background: 'rgba(255, 153, 0, 0.1)',
+                    border: '1px solid rgba(255, 153, 0, 0.5)',
+                    color: '#fff',
+                    borderRadius: '10px'
+                  }}
+                />
+              </motion.div>
+            )}
+
             {step === 1 ? (
               <motion.div 
                 className="space-y-6"
@@ -663,27 +903,59 @@ const Signup = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div>
-                  <motion.h2 
-                    className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent"
-                    animate={{
-                      textShadow: [
-                        '0 0 15px rgba(255, 0, 255, 0.8)',
-                        '0 极 20px rgba(0, 255, 255, 0.8)',
-                        '0 0 15px rgba(255, 153, 0, 0.8)',
-                        '0 0 15px rgba(124, 58, 237, 0.8)'
-                      ]
-                    }}
-                    transition={{ duration: 8, repeat: Infinity }}
+                <div className="flex justify-between items-start">
+                  <div>
+                    <motion.h2 
+                      className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent"
+                      animate={{
+                        textShadow: [
+                          '0 0 15px rgba(255, 0, 255, 0.8)',
+                          '0 0 20px rgba(0, 255, 255, 0.8)',
+                          '0 0 15px rgba(255, 153, 0, 0.8)',
+                          '0 0 15px rgba(124, 58, 237, 0.8)'
+                        ]
+                      }}
+                      transition={{ duration: 8, repeat: Infinity }}
+                    >
+                      Create Your Account
+                    </motion.h2>
+                    <motion.p 
+                      className="text-purple-300 mt-2"
+                      animate={controls}
+                    >
+                      Join our community and start your journey
+                    </motion.p>
+                  </div>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    Create Your Account
-                  </motion.h2>
-                  <motion.p 
-                    className="text-purple-300 mt-2"
-                    animate={controls}
+                    <Button
+                      type="primary"
+                      onClick={() => setShowTestCredentials(true)}
+                      icon={<InfoCircleOutlined />}
+                      style={{
+                        background: 'linear-gradient(45deg, #23a6d5, #23d5ab)',
+                        border: 'none',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      Test Accounts
+                    </Button>
+                  </motion.div>
+                </div>
+                
+                <div className="text-center mb-4">
+                  <Text className="text-yellow-300">
+                    ⚠️ Signup may not work due to SMTP restrictions. Use existing test accounts instead.
+                  </Text>
+                  <Button 
+                    type="link" 
+                    onClick={() => setShowTestCredentials(true)}
+                    className="text-purple-300"
                   >
-                    Join our community and start your journey
-                  </motion.p>
+                    Click here for test login credentials
+                  </Button>
                 </div>
                 
                 <motion.div
@@ -738,6 +1010,11 @@ const Signup = () => {
                       name="email"
                       label="Email"
                       rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}
+                      extra={
+                        <Text className="text-xs text-yellow-300">
+                          Note: OTP emails may not work due to SMTP restrictions
+                        </Text>
+                      }
                     >
                       <motion.div
                         whileHover={{ scale: 1.02 }}
@@ -988,7 +1265,7 @@ const Signup = () => {
                         transition={{ delay: 0.6 }}
                       >
                         <motion.h3 
-                          className="text-xl md:text-2xl font-semib极 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
+                          className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
                           whileHover={{ scale: 1.02 }}
                         >
                           Seller Details
@@ -1053,23 +1330,67 @@ const Signup = () => {
                     )}
 
                     <motion.div
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                      className="space-y-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.8 }}
                     >
-                      <Form.Item>
-                        <GlowingButton
-                          type="primary"
-                          htmlType="submit"
-                          block
-                          size="large"
-                          className="text-lg"
-                          loading={loading}
-                          disabled={loading}
+                      <div className="p-4 rounded-lg" style={{ 
+                        background: 'rgba(124, 58, 237, 0.1)', 
+                        border: '1px solid rgba(124, 58, 237, 0.3)' 
+                      }}>
+                        <div className="flex items-start">
+                          <InfoCircleOutlined className="text-purple-400 text-lg mr-3 mt-1" />
+                          <div className="text-sm text-purple-200">
+                            <p className="font-semibold mb-1">Alternative:</p>
+                            <p>Instead of signing up, you can use existing test accounts. Click the "Test Accounts" button above for login details.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <motion.div
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                          className="flex-1"
                         >
-                          Create Account
-                        </GlowingButton>
-                      </Form.Item>
+                          <Button
+                            type="default"
+                            onClick={() => window.location.href = '/login'}
+                            block
+                            size="large"
+                            className="text-lg"
+                            style={{
+                              background: 'rgba(35, 166, 213, 0.2)',
+                              borderColor: '#23a6d5',
+                              color: '#23a6d5',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            Already have account? Login
+                          </Button>
+                        </motion.div>
+                        
+                        <motion.div
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                          className="flex-1"
+                        >
+                          <GlowingButton
+                            type="primary"
+                            htmlType="submit"
+                            block
+                            size="large"
+                            className="text-lg"
+                            loading={loading}
+                            disabled={loading}
+                          >
+                            Create Account
+                          </GlowingButton>
+                        </motion.div>
+                      </div>
                     </motion.div>
                   </StyledForm>
                 </motion.div>
@@ -1102,6 +1423,22 @@ const Signup = () => {
                   >
                     We've sent a verification code to {emailForOTP}
                   </motion.p>
+                  <div className="mt-4 p-3 rounded-lg" style={{ 
+                    background: 'rgba(255, 153, 0, 0.1)', 
+                    border: '1px solid rgba(255, 153, 0, 0.3)' 
+                  }}>
+                    <Text className="text-yellow-300 text-sm">
+                      ⚠️ If you don't receive the OTP email, it's due to SMTP restrictions on Render. 
+                      Use the test accounts instead.
+                    </Text>
+                    <Button 
+                      type="link" 
+                      onClick={() => setShowTestCredentials(true)}
+                      className="text-purple-300 text-sm"
+                    >
+                      View test accounts
+                    </Button>
+                  </div>
                 </div>
 
                 <StyledForm
@@ -1158,12 +1495,28 @@ const Signup = () => {
                       Didn't receive code? Resend OTP
                     </Button>
                   </motion.div>
+
+                  <div className="text-center mt-6">
+                    <Button 
+                      type="link" 
+                      onClick={() => setStep(1)}
+                      className="text-purple-300"
+                    >
+                      ← Back to signup
+                    </Button>
+                  </div>
                 </StyledForm>
               </motion.div>
             )}
           </div>
         </FormContainer>
       </motion.div>
+
+      {/* Test Credentials Modal */}
+      <TestCredentialsModal 
+        visible={showTestCredentials}
+        onClose={() => setShowTestCredentials(false)}
+      />
     </div>
   );
 };
